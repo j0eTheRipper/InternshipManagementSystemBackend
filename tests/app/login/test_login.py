@@ -1,5 +1,7 @@
 from fastapi.testclient import TestClient
-from app.login.models import Role, User
+from app.dependencies import database_connector
+from app.models.Role import Role
+from app.models.User import User
 from app.main import app
 
 
@@ -12,7 +14,9 @@ def test_login():
     assert response.status_code == 405
 
 
-def test_login_wrong_credentials():
+def test_login_wrong_credentials(mocker):
+    mocker.patch.object(database_connector, "create_connection", return_value=None)
+    mocker.patch.object(database_connector, "execute_read", return_value=None)
     response = client.post(
         "/login",
         json={"email": "wrong-email@gmail.com", "password": "wrong-password"},

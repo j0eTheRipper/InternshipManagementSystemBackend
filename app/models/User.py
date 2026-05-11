@@ -1,18 +1,9 @@
 from pydantic import BaseModel
-from enum import Enum
 
+from app.dependencies.dbExceptions import IncorrectEmailOrPassword
+
+from .Role import Role
 from ..dependencies import database_connector
-from .dbExceptions import IncorrectEmailOrPassword
-
-
-class Credentials(BaseModel):
-    email: str
-    password: str
-
-
-class Role(Enum):
-    student = "student"
-    universityMentor = "universityMentor"
 
 
 class User(BaseModel):

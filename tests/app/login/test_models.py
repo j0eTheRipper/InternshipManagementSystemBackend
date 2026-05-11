@@ -1,5 +1,5 @@
-from app.login.dbExceptions import IncorrectEmailOrPassword
-from app.login.models import User
+from app.dependencies.dbExceptions import IncorrectEmailOrPassword
+from app.models.User import User
 import pytest
 
 

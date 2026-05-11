@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
-from .dbExceptions import IncorrectEmailOrPassword
-from .models import Credentials, User
+from app.dependencies.dbExceptions import IncorrectEmailOrPassword
+from ..models.Credentials import Credentials
+from ..models.User import User
 
 
 router = APIRouter()

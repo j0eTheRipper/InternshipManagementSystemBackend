@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
-from .login.contoller import router as login_router
-
+from .controllers.login import router as login_router
 
 app = FastAPI()
 
