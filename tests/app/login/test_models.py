@@ -4,7 +4,7 @@ import pytest
 
 
 def test_user_login(mocker):
-    mock_user = [("mock", "mockname", "mockmail@mail.com", "mockPass", "student")]
+    mock_user = [("mock", "mockmail@mail.com", "student", 1)]
     mocker.patch(
         "app.dependencies.database_connector.execute_read", return_value=mock_user
     )

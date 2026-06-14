@@ -1,11 +1,18 @@
 from fastapi.testclient import TestClient
 from app.dependencies import database_connector
 from app.models.Role import Role
-from app.models.User import User
+from app.models.User import User, Student
 from app.main import app
 
 
 client = TestClient(app)
+
+mock_mentor = User(
+    user_id=1,
+    fullname="mentor1",
+    email="email@email.email",
+    role=Role.universityMentor,
+)
 
 
 def test_login():
@@ -26,14 +33,8 @@ def test_login_wrong_credentials(mocker):
     assert response.json() == {"detail": "email or password incorrect!"}
 
 
-def test_login_correct_credentials(mocker):
-    mock_user = User(
-        password="password",
-        fullname="fullname",
-        email="email@email.email",
-        role=Role.student,
-    )
-
+def test_login_correct_credentials_mentor(mocker):
+    mock_user = mock_mentor
     mocker.patch.object(User, "login", return_value=mock_user)
 
     response = client.post(
@@ -43,10 +44,54 @@ def test_login_correct_credentials(mocker):
 
     assert response.status_code == 200
     assert response.json() == {
-        "password": "password",
-        "fullname": "fullname",
+        "fullname": "mentor1",
         "email": "email@email.email",
-        "role": "student",
+        "role": "universityMentor",
+        "user_id": 1,
+    }
+
+
+def test_login_correct_student(mocker):
+    mock_user = User(
+        fullname="fullname",
+        email="Studentemail@email.email",
+        role=Role.student,
+        user_id=1,
+    )
+
+    mock_student = Student(
+        user=mock_user,
+        university_mentor=mock_mentor,
+        year_of_study=2,
+        student_id="TP0112233",
+        field_of_study="software engineer",
+    )
+
+    mocker.patch.object(User, "login", return_value=mock_student)
+
+    response = client.post(
+        "/login",
+        json={"email": "correctemail@gmail.com", "password": "123123123"},
+    )
+
+    assert response.status_code == 200
+    print(response.json())
+    assert response.json() == {
+        "user": {
+            "user_id": 1,
+            "fullname": "fullname",
+            "email": "Studentemail@email.email",
+            "role": "student",
+        },
+        "university_mentor": {
+            "user_id": 1,
+            "fullname": "mentor1",
+            "email": "email@email.email",
+            "role": "universityMentor",
+        },
+        "year_of_study": 2,
+        "field_of_study": "software engineer",
+        "student_id": "TP0112233",
     }
 
 
