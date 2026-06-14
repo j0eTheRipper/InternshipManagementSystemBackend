@@ -7,7 +7,6 @@ from ..dependencies import database_connector
 
 
 class User(BaseModel):
-    username: str
     password: str
     fullname: str
     email: str
@@ -18,7 +17,7 @@ class User(BaseModel):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(
             connection,
-            f"SELECT username, fullname, email, password, role FROM users WHERE email='{email}' and password='{password}';",
+            f"SELECT fullname, email, password, role FROM users WHERE email='{email}' and password='{password}';",
         )
 
         if not row:
@@ -27,9 +26,8 @@ class User(BaseModel):
         row = row[0]
 
         return User(
-            username=row[0],
-            fullname=row[1],
-            email=row[2],
-            password=row[3],
-            role=row[4],
+            fullname=row[0],
+            email=row[1],
+            password=row[2],
+            role=row[3],
         )

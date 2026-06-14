@@ -11,7 +11,7 @@ router = APIRouter()
 @router.post("/login")
 async def login(credentials: Credentials):
     if not credentials.email or not credentials.password:
-        raise HTTPException(400, "Username and password are required.")
+        raise HTTPException(400, "email and password are required.")
 
     try:
         return User.login(credentials.email, credentials.password)

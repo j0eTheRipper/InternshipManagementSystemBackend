@@ -28,7 +28,6 @@ def test_login_wrong_credentials(mocker):
 
 def test_login_correct_credentials(mocker):
     mock_user = User(
-        username="user",
         password="password",
         fullname="fullname",
         email="email@email.email",
@@ -44,7 +43,6 @@ def test_login_correct_credentials(mocker):
 
     assert response.status_code == 200
     assert response.json() == {
-        "username": "user",
         "password": "password",
         "fullname": "fullname",
         "email": "email@email.email",
@@ -59,4 +57,4 @@ def test_login_blank_credential():
     )
 
     assert response.status_code == 400
-    assert response.json() == {"detail": "Username and password are required."}
+    assert response.json() == {"detail": "email and password are required."}
