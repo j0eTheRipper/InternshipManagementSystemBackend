@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from app.dependencies.dbExceptions import IncorrectEmailOrPassword
+from ..dependencies.dbExceptions import IncorrectEmailOrPassword
 
 from .Role import Role
 from ..dependencies import database_connector
