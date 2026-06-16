@@ -53,6 +53,7 @@ class Student(BaseModel):
     year_of_study: int
     field_of_study: str
     student_id: str
+    progress: str
 
     @staticmethod
     def getStudent(user: User):
@@ -62,7 +63,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(
             connection,
-            f"SELECT year_of_study, field_of_study, student_id, university_mentor_id FROM student WHERE user_id = {user.user_id};",
+            f"SELECT year_of_study, field_of_study, student_id, university_mentor_id, progress FROM student WHERE user_id = {user.user_id};",
         )
 
         if not row:
@@ -79,4 +80,5 @@ class Student(BaseModel):
             year_of_study=row[0],
             field_of_study=row[1],
             student_id=row[2],
+            progress=row[4],
         )

@@ -9,6 +9,7 @@ STUDENT_DATA = {
     "field_of_study": "software engineer",
     "student_id": "TP0112233",
     "university_mentor_id": 999,
+    "progress": "none",
 }
 
 MENTOR_DATA = {
@@ -45,6 +46,7 @@ def test_get_student_returns_student_for_student_role(mocker):
     assert result.year_of_study == 2
     assert result.field_of_study == "software engineer"
     assert result.student_id == "TP0112233"
+    assert result.progress == "none"
 
 
 def test_get_student_raises_not_student_for_university_mentor(mocker):

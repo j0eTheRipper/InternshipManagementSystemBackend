@@ -65,6 +65,7 @@ def test_login_correct_student(mocker):
         year_of_study=2,
         student_id="TP0112233",
         field_of_study="software engineer",
+        progress="none",
     )
 
     mocker.patch.object(User, "login", return_value=mock_student)
@@ -92,6 +93,7 @@ def test_login_correct_student(mocker):
         "year_of_study": 2,
         "field_of_study": "software engineer",
         "student_id": "TP0112233",
+        "progress": "none",
     }
 
 

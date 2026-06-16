@@ -5,7 +5,7 @@ import pytest
 
 def test_user_login(mocker):
     mock_user = [("mock", "mockmail@mail.com", "student", 1)]
-    mock_student_data = [(2, "Computer Science", "TP12345", 999)]
+    mock_student_data = [(2, "Computer Science", "TP12345", 999, "none")]
     mock_mentor_data = [("Mentor", "mentor@mail.com", "universityMentor", 999)]
 
     mocker.patch(
