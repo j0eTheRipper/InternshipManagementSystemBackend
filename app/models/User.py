@@ -26,7 +26,7 @@ class User(BaseModel):
         row = row[0]
 
         user = User(fullname=row[0], email=row[1], role=row[2], user_id=int(row[3]))
-        if user.role != Role.student:
+        if user.role == Role.student:
             return Student.getStudent(user)
         else:
             return user
@@ -36,7 +36,7 @@ class User(BaseModel):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(
             connection,
-            f"SELECT fullname, email, password, role, id FROM users WHERE id='{user_id}';",
+            f"SELECT fullname, email, role, id FROM users WHERE id='{user_id}';",
         )
 
         if not row:
@@ -44,7 +44,7 @@ class User(BaseModel):
 
         row = row[0]
 
-        return User(fullname=row[0], email=row[1], role=row[3], user_id=row[4])
+        return User(fullname=row[0], email=row[1], role=row[2], user_id=row[3])
 
 
 class Student(BaseModel):
@@ -62,7 +62,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(
             connection,
-            f"SELECT year_of_study, field_of_study, student_id, university_mentor FROM students WHERE user_id = {user.user_id};",
+            f"SELECT year_of_study, field_of_study, student_id, university_mentor_id FROM student WHERE user_id = {user.user_id};",
         )
 
         if not row:

@@ -8,7 +8,7 @@ STUDENT_DATA = {
     "year_of_study": 2,
     "field_of_study": "software engineer",
     "student_id": "TP0112233",
-    "university_mentor": 999,
+    "university_mentor_id": 999,
 }
 
 MENTOR_DATA = {
@@ -20,7 +20,7 @@ MENTOR_DATA = {
 
 
 def _mock_rows_from_query(connection, query):
-    if "FROM students" in query:
+    if "FROM student" in query:
         parts = query.split("FROM")[0].replace("SELECT", "").strip()
         columns = [c.strip() for c in parts.split(",")]
         return [tuple(STUDENT_DATA[c] for c in columns)]
