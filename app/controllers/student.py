@@ -9,4 +9,4 @@ router = APIRouter()
 
 @router.get('/student')
 def get_student(user: Annotated[str, Depends(User.getUserData)]):
-    return user
+    return Student.getStudent(user)
