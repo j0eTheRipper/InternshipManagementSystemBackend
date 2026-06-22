@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .controllers.login import router as login_router
 from .controllers.student import router as student_router
+from .controllers.resume import router as resume_router
 
 app = FastAPI()
 
@@ -13,6 +14,7 @@ origins = [
 
 app.include_router(login_router)
 app.include_router(student_router)
+app.include_router(resume_router)
 
 app.add_middleware(
     CORSMiddleware,

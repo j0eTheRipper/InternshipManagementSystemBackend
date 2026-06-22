@@ -33,5 +33,6 @@ def execute_write(connection, query):
 
     try:
         cursor.execute(query)
+        connection.commit()
     except OperationalError as e:
         print(f"error {e}")

@@ -27,7 +27,7 @@ class User(BaseModel):
 
         user = User(fullname=row[0], email=row[1], role=row[2], user_id=int(row[3]))
         if user.role == Role.student:
-            return Student.getStudent(user)
+            return Student.get_student(user)
         else:
             return user
 
@@ -56,7 +56,7 @@ class Student(BaseModel):
     progress: str
 
     @staticmethod
-    def getStudent(user: User):
+    def get_student(user: User):
         if user.role != Role.student:
             raise NotStudent
 

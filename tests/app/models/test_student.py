@@ -39,7 +39,7 @@ def test_get_student_returns_student_for_student_role(mocker):
     )
     mocker.patch.object(User, "getUserData", return_value=mock_mentor)
 
-    result = Student.getStudent(user)
+    result = Student.get_student(user)
 
     assert result.user.email == "john@example.com"
     assert result.university_mentor.email == "mentor@example.com"
@@ -64,7 +64,7 @@ def test_get_student_raises_not_student_for_university_mentor(mocker):
     mocker.patch.object(User, "getUserData", return_value=mock_mentor)
 
     with pytest.raises(NotStudent):
-        Student.getStudent(user)
+        Student.get_student(user)
 
 
 def test_get_student_raises_error_when_no_record_found(mocker):
@@ -74,4 +74,4 @@ def test_get_student_raises_error_when_no_record_found(mocker):
     mocker.patch("app.dependencies.database_connector.execute_read", return_value=[])
 
     with pytest.raises(Exception):
-        Student.getStudent(user)
+        Student.get_student(user)
