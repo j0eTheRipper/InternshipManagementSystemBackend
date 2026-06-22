@@ -1,5 +1,6 @@
 from os import path
 
+from fastapi import HTTPException
 from pydantic import BaseModel
 
 from ..dependencies.database_connector import (
@@ -17,10 +18,19 @@ class Resume(BaseModel):
     @staticmethod
     def get_resume(student_id: str):
         connection = create_connection(False)
-        query = f"SELECT resume_id, student_id, file, verified FROM resume WHERE student_id = {student_id};"
-        result = execute_read(connection, query)
+        query = f"SELECT resume_id, student_id, file, verified FROM resume WHERE student_id = '{student_id}';"
+        results = execute_read(connection, query)
 
-        print(result)
+        if not results:
+            raise HTTPException(404, "student has no resume")
+
+        resumes = map(
+            lambda result: Resume(
+                student_id=result[1], file=result[2], verified=result[3]
+            ),
+            results,
+        )
+        return list(resumes)
 
     @staticmethod
     def upload_resume_in_storage(file_name: str, resume_file: bytes):
@@ -33,5 +43,4 @@ class Resume(BaseModel):
     def save_resume_in_db(student_id: str, resume: str):
         connection = create_connection(False)
         query = f"INSERT INTO resume (student_id, file) VALUES ('{student_id}', '{resume}');"
-        print(query)
         execute_write(connection, query)

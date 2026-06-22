@@ -76,7 +76,6 @@ def test_login_correct_student(mocker):
     )
 
     assert response.status_code == 200
-    print(response.json())
     assert response.json() == {
         "user": {
             "user_id": 1,

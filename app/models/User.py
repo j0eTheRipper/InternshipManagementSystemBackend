@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from pydantic import BaseModel
 
 from ..dependencies.dbExceptions import IncorrectEmailOrPassword, NotStudent
@@ -40,7 +41,7 @@ class User(BaseModel):
         )
 
         if not row:
-            raise IncorrectEmailOrPassword
+            raise HTTPException(404, "user not found")
 
         row = row[0]
 
@@ -70,7 +71,6 @@ class Student(BaseModel):
             raise NotStudent
 
         row = row[0]
-        print(row)
 
         university_mentor_user = User.getUserData(row[3])
 
