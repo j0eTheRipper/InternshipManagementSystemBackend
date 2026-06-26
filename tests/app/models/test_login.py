@@ -43,12 +43,9 @@ def test_login_correct_credentials_mentor(mocker):
     )
 
     assert response.status_code == 200
-    assert response.json() == {
-        "fullname": "mentor1",
-        "email": "email@email.email",
-        "role": "universityMentor",
-        "user_id": 1,
-    }
+    body = response.json()
+    assert "access_token" in body
+    assert body["token_type"] == "bearer"
 
 
 def test_login_correct_student(mocker):
@@ -76,24 +73,9 @@ def test_login_correct_student(mocker):
     )
 
     assert response.status_code == 200
-    assert response.json() == {
-        "user": {
-            "user_id": 1,
-            "fullname": "fullname",
-            "email": "Studentemail@email.email",
-            "role": "student",
-        },
-        "university_mentor": {
-            "user_id": 1,
-            "fullname": "mentor1",
-            "email": "email@email.email",
-            "role": "universityMentor",
-        },
-        "year_of_study": 2,
-        "field_of_study": "software engineer",
-        "student_id": "TP0112233",
-        "progress": "none",
-    }
+    body = response.json()
+    assert "access_token" in body
+    assert body["token_type"] == "bearer"
 
 
 def test_login_blank_credential():

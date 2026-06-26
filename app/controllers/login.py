@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException
 
+from ..dependencies.auth import create_access_token
 from ..dependencies.dbExceptions import IncorrectEmailOrPassword
 from ..models.Credentials import Credentials
-from ..models.User import User
+from ..models.User import Student, User
 
 
 router = APIRouter()
@@ -14,6 +15,12 @@ async def login(credentials: Credentials):
         raise HTTPException(400, "email and password are required.")
 
     try:
-        return User.login(credentials.email, credentials.password)
+        user_or_student = User.login(credentials.email, credentials.password)
+        if isinstance(user_or_student, Student):
+            user = user_or_student.user
+        else:
+            user = user_or_student
+        token = create_access_token(user)
+        return {"access_token": token, "token_type": "bearer"}
     except IncorrectEmailOrPassword:
         raise HTTPException(401, "email or password incorrect!")
