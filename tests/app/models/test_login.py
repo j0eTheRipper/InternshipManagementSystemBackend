@@ -46,6 +46,10 @@ def test_login_correct_credentials_mentor(mocker):
     body = response.json()
     assert "access_token" in body
     assert body["token_type"] == "bearer"
+    assert body["role"] == "universityMentor"
+    assert body["user"]["fullname"] == "mentor1"
+    assert body["user"]["email"] == "email@email.email"
+    assert body["user"]["role"] == "universityMentor"
 
 
 def test_login_correct_student(mocker):
@@ -76,6 +80,12 @@ def test_login_correct_student(mocker):
     body = response.json()
     assert "access_token" in body
     assert body["token_type"] == "bearer"
+    assert body["role"] == "student"
+    assert body["user"]["student_id"] == "TP0112233"
+    assert body["user"]["field_of_study"] == "software engineer"
+    assert body["user"]["year_of_study"] == 2
+    assert body["user"]["user"]["fullname"] == "fullname"
+    assert body["user"]["university_mentor"]["fullname"] == "mentor1"
 
 
 def test_login_blank_credential():
