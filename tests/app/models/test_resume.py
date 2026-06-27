@@ -39,6 +39,7 @@ def test_upload_resume_success(mocker):
             side_effect=[
                 [(2, "software engineer", "TP0112233", 999, "none")],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
+                [(5,)],
             ],
         )
         mocker.patch("app.dependencies.database_connector.execute_write")
@@ -53,7 +54,10 @@ def test_upload_resume_success(mocker):
         )
 
         assert response.status_code == 200
-        assert response.json() == {"file_path": "/abs/path/to/resume.pdf"}
+        assert response.json() == {
+            "file_path": "/abs/path/to/resume.pdf",
+            "resume_id": 5,
+        }
     finally:
         app.dependency_overrides.clear()
 

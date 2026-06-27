@@ -68,7 +68,18 @@ class Resume(BaseModel):
         return os.path.abspath(full_path)
 
     @staticmethod
-    def save_resume_in_db(student_id: str, resume_path: str):
+    def save_resume_in_db(student_id: str, resume_path: str) -> int:
         connection = database_connector.create_connection(False)
         query = f"INSERT INTO resume (student_id, file) VALUES ('{student_id}', '{resume_path}');"
+        database_connector.execute_write(connection, query)
+        result = database_connector.execute_read(
+            connection,
+            f"SELECT MAX(resume_id) FROM resume WHERE student_id = '{student_id}';",
+        )
+        return result[0][0] if result else 0
+
+    @staticmethod
+    def approve_resume(resume_id: int):
+        connection = database_connector.create_connection(False)
+        query = f"UPDATE resume SET verified = true WHERE resume_id = {resume_id};"
         database_connector.execute_write(connection, query)

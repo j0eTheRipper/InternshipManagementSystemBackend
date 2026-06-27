@@ -3,7 +3,8 @@ from typing import Annotated, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
-from ..dependencies.auth import get_current_user, require_student
+from ..dependencies.auth import get_current_user, require_mentor, require_student
+from ..models.Notification import Notification
 from ..models.Resume import Resume
 from ..models.Role import Role
 from ..models.User import Student, User
@@ -41,8 +42,17 @@ async def upload_resume(
     path_to_resume = Resume.upload_resume_in_storage(
         student.student_id, file.filename, content
     )
-    Resume.save_resume_in_db(student.student_id, path_to_resume)
-    return {"file_path": path_to_resume}
+    resume_id = Resume.save_resume_in_db(student.student_id, path_to_resume)
+
+    mentor = student.university_mentor
+    Notification.create_notification(
+        user_id=mentor.user_id,
+        message=f"Student {student.user.fullname} has uploaded their resume",
+        type="resume_uploaded",
+        related_id=resume_id,
+    )
+
+    return {"file_path": path_to_resume, "resume_id": resume_id}
 
 
 @router.get("/")
@@ -85,3 +95,22 @@ async def download_resume(
         media_type="application/pdf",
         filename=f"resume_{resume_id}.pdf",
     )
+
+
+@router.patch("/{resume_id}/approve")
+async def approve_resume(
+    resume_id: int,
+    user: Annotated[User, Depends(require_mentor)],
+):
+    resume = Resume.get_resume_by_id(resume_id)
+    Resume.approve_resume(resume_id)
+
+    student = Student.get_student_by_id(resume.student_id)
+    Notification.create_notification(
+        user_id=student.user.user_id,
+        message=f"Your mentor {user.fullname} has approved your resume",
+        type="resume_approved",
+        related_id=resume_id,
+    )
+
+    return {"message": "Resume approved", "resume_id": resume_id}

@@ -82,3 +82,55 @@ class Student(BaseModel):
             student_id=row[2],
             progress=row[4],
         )
+
+    @staticmethod
+    def get_student_by_id(student_id: str):
+        connection = database_connector.create_connection(False)
+        row = database_connector.execute_read(
+            connection,
+            f"SELECT user_id, year_of_study, field_of_study, university_mentor_id, progress FROM student WHERE student_id = '{student_id}';",
+        )
+
+        if not row:
+            raise HTTPException(404, "student not found")
+
+        row = row[0]
+        user = User.getUserData(row[0])
+        university_mentor_user = User.getUserData(row[3])
+
+        return Student(
+            user=user,
+            university_mentor=university_mentor_user,
+            year_of_study=row[1],
+            field_of_study=row[2],
+            student_id=student_id,
+            progress=row[4],
+        )
+
+    @staticmethod
+    def get_students_by_mentor(mentor_id: int):
+        connection = database_connector.create_connection(False)
+        rows = database_connector.execute_read(
+            connection,
+            f"SELECT user_id, year_of_study, field_of_study, student_id, progress FROM student WHERE university_mentor_id = {mentor_id};",
+        )
+
+        if not rows:
+            return []
+
+        students = []
+        for row in rows:
+            user = User.getUserData(row[0])
+            university_mentor_user = User.getUserData(mentor_id)
+            students.append(
+                Student(
+                    user=user,
+                    university_mentor=university_mentor_user,
+                    year_of_study=row[1],
+                    field_of_study=row[2],
+                    student_id=row[3],
+                    progress=row[4],
+                )
+            )
+
+        return students
