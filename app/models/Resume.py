@@ -81,5 +81,7 @@ class Resume(BaseModel):
     @staticmethod
     def approve_resume(resume_id: int):
         connection = database_connector.create_connection(False)
-        query = f"UPDATE resume SET verified = true WHERE resume_id = {resume_id};"
-        database_connector.execute_write(connection, query)
+        update_resume_status = (
+            f"UPDATE resume SET verified = true WHERE resume_id = {resume_id};"
+        )
+        database_connector.execute_write(connection, update_resume_status)

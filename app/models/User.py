@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from psycopg2 import DatabaseError
 from pydantic import BaseModel
 
 from ..dependencies.dbExceptions import IncorrectEmailOrPassword, NotStudent
@@ -134,3 +135,9 @@ class Student(BaseModel):
             )
 
         return students
+
+    @staticmethod
+    def update_student_progress(student_id: str):
+        connection = database_connector.create_connection(False)
+        update_student_progres = f"UPDATE student SET progress = 'application' WHERE student_id = '{student_id}'"
+        database_connector.execute_write(connection, update_student_progres)

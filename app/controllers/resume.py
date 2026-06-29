@@ -106,6 +106,7 @@ async def approve_resume(
     Resume.approve_resume(resume_id)
 
     student = Student.get_student_by_id(resume.student_id)
+    student.update_student_progress(resume.student_id)
     Notification.create_notification(
         user_id=student.user.user_id,
         message=f"Your mentor {user.fullname} has approved your resume",
