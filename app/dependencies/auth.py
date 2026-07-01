@@ -47,3 +47,9 @@ async def require_mentor(user: Annotated[User, Depends(get_current_user)]) -> Us
     if user.role != Role.universityMentor:
         raise HTTPException(403, "Only mentors can access this endpoint")
     return user
+
+
+async def require_headhunter(user: Annotated[User, Depends(get_current_user)]) -> User:
+    if user.role != Role.headhunter:
+        raise HTTPException(403, "Only headhunters can access this endpoint")
+    return user

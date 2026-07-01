@@ -6,6 +6,9 @@ from .controllers.login import router as login_router
 from .controllers.student import router as student_router
 from .controllers.resume import router as resume_router
 from .controllers.notification import router as notification_router
+from .controllers.headhunter import router as headhunter_router
+from .controllers.opportunity import router as opportunity_router
+from .controllers.application import router as application_router
 
 app = FastAPI()
 
@@ -17,6 +20,9 @@ app.include_router(login_router)
 app.include_router(student_router)
 app.include_router(resume_router)
 app.include_router(notification_router)
+app.include_router(headhunter_router)
+app.include_router(opportunity_router)
+app.include_router(application_router)
 
 app.add_middleware(
     CORSMiddleware,

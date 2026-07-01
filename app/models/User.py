@@ -30,6 +30,9 @@ class User(BaseModel):
         user = User(fullname=row[0], email=row[1], role=row[2], user_id=int(row[3]))
         if user.role == Role.student:
             return Student.get_student(user)
+        elif user.role == Role.headhunter:
+            from .Headhunter import Headhunter
+            return Headhunter.get_headhunter(user)
         else:
             return user
 
@@ -47,6 +50,28 @@ class User(BaseModel):
         row = row[0]
 
         return User(fullname=row[0], email=row[1], role=row[2], user_id=row[3])
+
+    @staticmethod
+    def get_by_email(email: str):
+        connection = database_connector.create_connection(False)
+        row = database_connector.execute_read(
+            connection,
+            f"SELECT fullname, email, role, id FROM users WHERE email = '{email}';",
+        )
+        if not row:
+            return None
+        row = row[0]
+        return User(fullname=row[0], email=row[1], role=row[2], user_id=row[3])
+
+    @staticmethod
+    def create(fullname: str, email: str, password: str, role):
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"INSERT INTO users (fullname, email, password, role) "
+            f"VALUES ('{fullname}', '{email}', '{password}', '{role.value}');",
+        )
+        return User.get_by_email(email)
 
 
 class Student(BaseModel):

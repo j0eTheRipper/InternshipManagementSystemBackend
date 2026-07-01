@@ -4,3 +4,7 @@ class IncorrectEmailOrPassword(Exception):
 
 class NotStudent(Exception):
     pass
+
+
+class NotHeadhunter(Exception):
+    pass

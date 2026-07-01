@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from ..dependencies.auth import create_access_token
 from ..dependencies.dbExceptions import IncorrectEmailOrPassword
 from ..models.Credentials import Credentials
+from ..models.Headhunter import Headhunter
 from ..models.User import Student, User
 
 
@@ -19,6 +20,9 @@ async def login(credentials: Credentials):
         if isinstance(user_or_student, Student):
             user = user_or_student.user
             role = "student"
+        elif isinstance(user_or_student, Headhunter):
+            user = user_or_student.user
+            role = "headhunter"
         else:
             user = user_or_student
             role = "universityMentor"
