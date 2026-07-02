@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..dependencies.auth import get_current_user, require_headhunter, require_student
+from ..dependencies.auth import require_headhunter, require_student
 from ..models.Application import Application
 from ..models.JobOpportunity import JobOpportunity
 from ..models.Notification import Notification
@@ -28,7 +28,7 @@ async def apply(
     if not opportunity:
         raise HTTPException(404, "Opportunity not found")
 
-    resume = Resume.get_resume_by_id(resume_id)
+    resume = Resume.get_by_id(resume_id)
     if not resume:
         raise HTTPException(404, "Resume not found")
 
@@ -64,7 +64,9 @@ async def get_applicants(
     if not opportunity:
         raise HTTPException(404, "Opportunity not found")
     if opportunity.headhunter_id != user.user_id:
-        raise HTTPException(403, "You can only view applicants for your own opportunities")
+        raise HTTPException(
+            403, "You can only view applicants for your own opportunities"
+        )
 
     return Application.get_by_opportunity(opportunity_id)
 
@@ -81,7 +83,9 @@ async def update_application_status(
 
     opportunity = JobOpportunity.get_by_id(application.opportunity_id)
     if opportunity.headhunter_id != user.user_id:
-        raise HTTPException(403, "You can only update applications for your own opportunities")
+        raise HTTPException(
+            403, "You can only update applications for your own opportunities"
+        )
 
     new_status = body.get("status")
     valid_statuses = ["pending", "interview", "accepted", "rejected"]
@@ -111,7 +115,9 @@ async def accept_application(
 
     opportunity = JobOpportunity.get_by_id(application.opportunity_id)
     if opportunity.headhunter_id != user.user_id:
-        raise HTTPException(403, "You can only accept applications for your own opportunities")
+        raise HTTPException(
+            403, "You can only accept applications for your own opportunities"
+        )
 
     if application.status not in ("pending", "interview"):
         raise HTTPException(400, "Can only accept pending or interview applications")

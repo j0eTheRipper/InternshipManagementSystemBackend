@@ -39,10 +39,10 @@ async def upload_resume(
     __file_too_big(content)
 
     student = Student.get_student(user)
-    path_to_resume = Resume.upload_resume_in_storage(
+    path_to_resume = Resume.upload_in_storage(
         student.student_id, file.filename, content
     )
-    resume_id = Resume.save_resume_in_db(student.student_id, path_to_resume)
+    resume_id = Resume.save_in_db(student.student_id, path_to_resume)
 
     mentor = student.university_mentor
     Notification.create_notification(
@@ -75,7 +75,7 @@ async def get_resume(
             raise HTTPException(422, "student_id is required for mentors")
         student_id = request_student_id
 
-    return Resume.get_resume(student_id)
+    return Resume.get_by_student(student_id)
 
 
 @router.get("/download/{resume_id}")
@@ -83,7 +83,9 @@ async def download_resume(
     resume_id: int,
     user: Annotated[User, Depends(get_current_user)],
 ):
-    resume = Resume.get_resume_by_id(resume_id)
+    resume = Resume.get_by_id(resume_id)
+    if not resume:
+        raise HTTPException(404, "resume not found")
 
     if user.role == Role.student:
         student = Student.get_student(user)
@@ -102,8 +104,10 @@ async def approve_resume(
     resume_id: int,
     user: Annotated[User, Depends(require_mentor)],
 ):
-    resume = Resume.get_resume_by_id(resume_id)
-    Resume.approve_resume(resume_id)
+    resume = Resume.get_by_id(resume_id)
+    if not resume:
+        raise HTTPException(404, "resume not found")
+    Resume.approve(resume_id)
 
     student = Student.get_student_by_id(resume.student_id)
     student.update_student_progress(resume.student_id)

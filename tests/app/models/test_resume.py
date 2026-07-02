@@ -183,7 +183,8 @@ def test_get_resume_student_empty(mocker):
         )
 
         response = client.get("/resume")
-        assert response.status_code == 404
+        assert response.status_code == 200
+        assert response.json() == []
     finally:
         app.dependency_overrides.clear()
 
