@@ -61,10 +61,10 @@ class Document(BaseModel):
         connection = database_connector.create_connection(False)
         doc_table_cols = ", ".join(f"{cls._table}.{col}" for col in cls._columns)
         query = (
-            f"SELECT {doc_table_cols}, users.fullname "
+            f"SELECT {doc_table_cols}, student_user.fullname "
             f"FROM {cls._table} "
             f"JOIN student ON {cls._table}.student_id = student.student_id "
-            f"JOIN users ON student.university_mentor_id = users.id "
+            f"JOIN users student_user ON student.user_id = student_user.id "
             f"WHERE student.university_mentor_id = {mentor_id} AND {cls._table}.verified = false;"
         )
         results = database_connector.execute_read(connection, query)

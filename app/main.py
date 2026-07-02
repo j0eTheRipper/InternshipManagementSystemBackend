@@ -9,6 +9,7 @@ from .controllers.notification import router as notification_router
 from .controllers.headhunter import router as headhunter_router
 from .controllers.opportunity import router as opportunity_router
 from .controllers.application import router as application_router
+from .controllers.offer_letter import router as offer_letter_router
 
 app = FastAPI()
 
@@ -23,6 +24,7 @@ app.include_router(notification_router)
 app.include_router(headhunter_router)
 app.include_router(opportunity_router)
 app.include_router(application_router)
+app.include_router(offer_letter_router)
 
 app.add_middleware(
     CORSMiddleware,

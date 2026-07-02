@@ -162,7 +162,7 @@ class Student(BaseModel):
         return students
 
     @staticmethod
-    def update_student_progress(student_id: str):
+    def update_student_progress(student_id: str, progress: str = "application"):
         connection = database_connector.create_connection(False)
-        update_student_progres = f"UPDATE student SET progress = 'application' WHERE student_id = '{student_id}'"
+        update_student_progres = f"UPDATE student SET progress = '{progress}' WHERE student_id = '{student_id}'"
         database_connector.execute_write(connection, update_student_progres)
