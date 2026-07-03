@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.dependencies.auth import require_headhunter, require_student
-from app.models.Application import Application
+from app.models.PartneredCompanies.Application import Application
 from app.models.Document.Resume import Resume
-from app.models.JobOpportunity import JobOpportunity
+from app.models.PartneredCompanies.JobOpportunity import JobOpportunity
 from app.models.Notification import Notification
 from app.models.User import Student, User
 

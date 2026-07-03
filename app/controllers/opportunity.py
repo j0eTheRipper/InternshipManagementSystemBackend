@@ -3,9 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.dependencies.auth import get_current_user, require_headhunter
-from app.models.Company import Company
-from app.models.Headhunter import Headhunter
-from app.models.JobOpportunity import JobOpportunity
+from app.models.PartneredCompanies.Headhunter.Headhunter import Headhunter
+from app.models.PartneredCompanies.JobOpportunity import JobOpportunity
 from app.models.User import User
 
 

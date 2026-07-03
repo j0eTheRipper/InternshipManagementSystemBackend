@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.dependencies.auth import create_access_token, get_current_user, require_headhunter
-from app.models.Company import Company
-from app.models.Headhunter import Headhunter
-from app.models.RegisterHeadhunterRequest import RegisterHeadhunterRequest
+from app.dependencies.auth import create_access_token, require_headhunter
+from app.models.PartneredCompanies.Company import Company
+from app.models.PartneredCompanies.Headhunter.Headhunter import Headhunter
+from app.models.PartneredCompanies.Headhunter.RegisterHeadhunterRequest import RegisterHeadhunterRequest
 from app.models.Role import Role
 from app.models.User import User
 

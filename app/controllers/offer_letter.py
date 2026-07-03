@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
 from app.dependencies.auth import get_current_user, require_mentor, require_student
-from app.models.Application import Application
+from app.models.PartneredCompanies.Application import Application
 from app.models.Document.OfferLetter import OfferLetter
 from app.models.Notification import Notification
 from app.models.Role import Role

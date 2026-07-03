@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 from app.dependencies import database_connector
 from app.dependencies.dbExceptions import NotHeadhunter
-from app.models.Company import Company
+from app.models.PartneredCompanies.Company import Company
 from app.models.Role import Role
 from app.models.User import User
 
