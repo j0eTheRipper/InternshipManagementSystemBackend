@@ -2,14 +2,14 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-from .controllers.login import router as login_router
-from .controllers.student import router as student_router
-from .controllers.resume import router as resume_router
-from .controllers.notification import router as notification_router
-from .controllers.headhunter import router as headhunter_router
-from .controllers.opportunity import router as opportunity_router
-from .controllers.application import router as application_router
-from .controllers.offer_letter import router as offer_letter_router
+from app.controllers.login import router as login_router
+from app.controllers.student import router as student_router
+from app.controllers.resume import router as resume_router
+from app.controllers.notification import router as notification_router
+from app.controllers.headhunter import router as headhunter_router
+from app.controllers.opportunity import router as opportunity_router
+from app.controllers.application import router as application_router
+from app.controllers.offer_letter import router as offer_letter_router
 
 app = FastAPI()
 

@@ -2,12 +2,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from ..dependencies.auth import require_headhunter, require_student
-from ..models.Application import Application
-from ..models.JobOpportunity import JobOpportunity
-from ..models.Notification import Notification
+from app.dependencies.auth import require_headhunter, require_student
+from app.models.Application import Application
 from app.models.Document.Resume import Resume
-from ..models.User import Student, User
+from app.models.JobOpportunity import JobOpportunity
+from app.models.Notification import Notification
+from app.models.User import Student, User
 
 
 router = APIRouter(prefix="/applications")

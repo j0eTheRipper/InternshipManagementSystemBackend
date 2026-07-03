@@ -4,12 +4,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 
-from ..dependencies.auth import get_current_user, require_mentor, require_student
-from ..models.Application import Application
-from ..models.Notification import Notification
+from app.dependencies.auth import get_current_user, require_mentor, require_student
+from app.models.Application import Application
 from app.models.Document.OfferLetter import OfferLetter
-from ..models.Role import Role
-from ..models.User import Student, User
+from app.models.Notification import Notification
+from app.models.Role import Role
+from app.models.User import Student, User
 
 router = APIRouter(prefix="/offer-letter")
 

@@ -2,9 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from ..dependencies.auth import get_current_user, require_mentor
-from ..dependencies.dbExceptions import NotStudent
-from ..models.User import Student, User
+from app.dependencies.auth import get_current_user, require_mentor
+from app.dependencies.dbExceptions import NotStudent
+from app.models.User import Student, User
 
 
 router = APIRouter()

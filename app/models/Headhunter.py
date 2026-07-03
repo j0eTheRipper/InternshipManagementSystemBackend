@@ -1,11 +1,11 @@
 from fastapi import HTTPException
 from pydantic import BaseModel
 
-from ..dependencies import database_connector
-from ..dependencies.dbExceptions import NotHeadhunter
-from .Company import Company
-from .Role import Role
-from .User import User
+from app.dependencies import database_connector
+from app.dependencies.dbExceptions import NotHeadhunter
+from app.models.Company import Company
+from app.models.Role import Role
+from app.models.User import User
 
 
 class Headhunter(BaseModel):

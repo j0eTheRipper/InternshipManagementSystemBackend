@@ -69,7 +69,10 @@ def test_login_correct_student(mocker):
         progress="none",
     )
 
-    mocker.patch.object(User, "login", return_value=mock_student)
+    mocker.patch.object(User, "login", return_value=mock_user)
+    mocker.patch(
+        "app.controllers.login.Student.get_student", return_value=mock_student
+    )
 
     response = client.post(
         "/login",

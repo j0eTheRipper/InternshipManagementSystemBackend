@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException
 
-from ..dependencies.auth import create_access_token
-from ..dependencies.dbExceptions import IncorrectEmailOrPassword
-from ..models.Credentials import Credentials
-from ..models.Headhunter import Headhunter
-from ..models.User import Student, User
+from app.dependencies.auth import create_access_token
+from app.dependencies.dbExceptions import IncorrectEmailOrPassword
+from app.models.Credentials import Credentials
+from app.models.Headhunter import Headhunter
+from app.models.Role import Role
+from app.models.User import Student, User
 
 
 router = APIRouter()
@@ -16,15 +17,15 @@ async def login(credentials: Credentials):
         raise HTTPException(400, "email and password are required.")
 
     try:
-        user_or_student = User.login(credentials.email, credentials.password)
-        if isinstance(user_or_student, Student):
-            user = user_or_student.user
+        user = User.login(credentials.email, credentials.password)
+        if user.role == Role.student:
+            user_or_student = Student.get_student(user)
             role = "student"
-        elif isinstance(user_or_student, Headhunter):
-            user = user_or_student.user
+        elif user.role == Role.headhunter:
+            user_or_student = Headhunter.get_headhunter(user)
             role = "headhunter"
         else:
-            user = user_or_student
+            user_or_student = user
             role = "universityMentor"
         token = create_access_token(user)
         return {

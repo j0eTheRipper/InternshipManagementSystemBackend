@@ -1,11 +1,9 @@
 from fastapi import HTTPException
-from psycopg2 import DatabaseError
 from pydantic import BaseModel
 
-from ..dependencies.dbExceptions import IncorrectEmailOrPassword, NotStudent
-
-from .Role import Role
-from ..dependencies import database_connector
+from app.dependencies.dbExceptions import IncorrectEmailOrPassword, NotStudent
+from app.dependencies import database_connector
+from app.models.Role import Role
 
 
 class User(BaseModel):
@@ -27,14 +25,7 @@ class User(BaseModel):
 
         row = row[0]
 
-        user = User(fullname=row[0], email=row[1], role=row[2], user_id=int(row[3]))
-        if user.role == Role.student:
-            return Student.get_student(user)
-        elif user.role == Role.headhunter:
-            from .Headhunter import Headhunter
-            return Headhunter.get_headhunter(user)
-        else:
-            return user
+        return User(fullname=row[0], email=row[1], role=row[2], user_id=int(row[3]))
 
     @staticmethod
     def getUserData(user_id: int):

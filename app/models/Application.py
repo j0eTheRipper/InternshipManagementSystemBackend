@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from pydantic import BaseModel
 
-from ..dependencies import database_connector
+from app.dependencies import database_connector
 
 
 class Application(BaseModel):

@@ -2,9 +2,9 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from ..dependencies.auth import get_current_user
-from ..models.Notification import Notification
-from ..models.User import User
+from app.dependencies.auth import get_current_user
+from app.models.Notification import Notification
+from app.models.User import User
 
 router = APIRouter(prefix="/notifications")
 

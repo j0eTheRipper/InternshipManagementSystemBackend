@@ -5,8 +5,8 @@ import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from ..models.Role import Role
-from ..models.User import User
+from app.models.Role import Role
+from app.models.User import User
 
 SECRET_KEY = "change-me-in-production-32-bytes-min!"
 ALGORITHM = "HS256"
