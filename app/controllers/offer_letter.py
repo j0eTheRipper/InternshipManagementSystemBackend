@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from ..dependencies.auth import get_current_user, require_mentor, require_student
 from ..models.Application import Application
 from ..models.Notification import Notification
-from ..models.OfferLetter import OfferLetter
+from app.models.Document.OfferLetter import OfferLetter
 from ..models.Role import Role
 from ..models.User import Student, User
 

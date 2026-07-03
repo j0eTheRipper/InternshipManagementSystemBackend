@@ -1,7 +1,7 @@
 from typing import ClassVar
 
-from ..dependencies import database_connector
-from .Document import Document
+from app.dependencies import database_connector
+from app.models.Document.Document import Document
 
 
 class OfferLetter(Document):

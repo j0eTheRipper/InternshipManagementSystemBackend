@@ -1,5 +1,5 @@
-from app.models.Document import Document
-from app.models.OfferLetter import OfferLetter
+from app.models.Document.Document import Document
+from app.models.Document.OfferLetter import OfferLetter
 
 
 # ─── Basis ───────────────────────────────────────────────────────────────

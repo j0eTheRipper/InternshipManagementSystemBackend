@@ -6,7 +6,7 @@ from ..dependencies.auth import require_headhunter, require_student
 from ..models.Application import Application
 from ..models.JobOpportunity import JobOpportunity
 from ..models.Notification import Notification
-from ..models.Resume import Resume
+from app.models.Document.Resume import Resume
 from ..models.User import Student, User
 
 

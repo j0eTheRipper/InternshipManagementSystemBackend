@@ -1,7 +1,7 @@
 import pytest
 
-from app.models.Document import Document
-from app.models.Resume import Resume
+from app.models.Document.Document import Document
+from app.models.Document.Resume import Resume
 
 
 # ─── Document base class ─────────────────────────────────────────────────
