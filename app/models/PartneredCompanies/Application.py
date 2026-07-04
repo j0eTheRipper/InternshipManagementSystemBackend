@@ -7,7 +7,7 @@ from app.dependencies import database_connector
 class Application(BaseModel):
     application_id: int
     student_id: str
-    opportunity_id: int
+    opportunity_id: int | None = None
     resume_id: int
     status: str
 
@@ -23,6 +23,16 @@ class Application(BaseModel):
         except Exception:
             raise HTTPException(409, "You have already applied to this opportunity")
 
+        return Application.get_last_by_student(student_id)
+
+    @staticmethod
+    def create_external(student_id: str, resume_id: int):
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"INSERT INTO application (student_id, opportunity_id, resume_id, status) "
+            f"VALUES ('{student_id}', NULL, {resume_id}, 'pending');",
+        )
         return Application.get_last_by_student(student_id)
 
     @staticmethod
