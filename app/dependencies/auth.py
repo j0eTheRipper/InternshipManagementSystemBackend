@@ -10,7 +10,7 @@ from app.models.User import User
 
 SECRET_KEY = "change-me-in-production-32-bytes-min!"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_HOURS = 24
+ACCESS_TOKEN_EXPIRE_HOURS = 720
 
 oauth2_scheme = HTTPBearer()
 
