@@ -85,6 +85,9 @@ async def download_offer_letter(
         if student.university_mentor.user_id != user.user_id:
             raise HTTPException(403, "You can only download offer letters of your supervisees")
 
+    if not os.path.exists(offer_letter.file):
+        raise HTTPException(404, "Offer letter file not found")
+
     return FileResponse(
         offer_letter.file,
         filename=f"offer_letter_{offer_letter_id}.pdf",
@@ -105,6 +108,26 @@ async def get_offer_letter_by_application(
         if doc.application_id == application_id:
             return doc
     raise HTTPException(404, "Offer letter not found")
+
+
+@router.get("/student/{student_id}")
+async def get_student_offer_letters(
+    student_id: str,
+    user: Annotated[User, Depends(require_mentor)],
+):
+    student = Student.get_student_by_id(student_id)
+    if not student:
+        raise HTTPException(404, "Student not found")
+    if student.university_mentor.user_id != user.user_id:
+        raise HTTPException(403, "You can only view offer letters of your supervisees")
+    return OfferLetter.get_by_student(student_id)
+
+
+@router.get("/all")
+async def get_all_offer_letters(
+    user: Annotated[User, Depends(require_mentor)],
+):
+    return OfferLetter.get_all_by_mentor(user.user_id)
 
 
 @router.get("/pending")

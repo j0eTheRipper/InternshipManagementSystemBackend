@@ -1,3 +1,4 @@
+import os
 from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
@@ -91,6 +92,9 @@ async def download_resume(
         student = Student.get_student(user)
         if student.student_id != resume.student_id:
             raise HTTPException(403, "you can only download your own resume")
+
+    if not os.path.exists(resume.file):
+        raise HTTPException(404, "Resume file not found")
 
     return FileResponse(
         resume.file,
