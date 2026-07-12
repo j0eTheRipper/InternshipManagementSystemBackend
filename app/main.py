@@ -10,6 +10,7 @@ from app.controllers.headhunter import router as headhunter_router
 from app.controllers.opportunity import router as opportunity_router
 from app.controllers.application import router as application_router
 from app.controllers.offer_letter import router as offer_letter_router
+from app.controllers.attendance import router as attendance_router
 
 app = FastAPI()
 
@@ -25,6 +26,7 @@ app.include_router(headhunter_router)
 app.include_router(opportunity_router)
 app.include_router(application_router)
 app.include_router(offer_letter_router)
+app.include_router(attendance_router)
 
 app.add_middleware(
     CORSMiddleware,
