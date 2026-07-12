@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import HTTPException
 from pydantic import BaseModel
 
@@ -72,6 +74,8 @@ class Student(BaseModel):
     field_of_study: str
     student_id: str
     progress: str
+    internship_start_date: Optional[str] = None
+    internship_duration_weeks: Optional[int] = None
 
     @staticmethod
     def get_student(user: User):
@@ -81,7 +85,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(
             connection,
-            f"SELECT year_of_study, field_of_study, student_id, university_mentor_id, progress FROM student WHERE user_id = {user.user_id};",
+            f"SELECT year_of_study, field_of_study, student_id, university_mentor_id, progress, internship_start_date, internship_duration_weeks FROM student WHERE user_id = {user.user_id};",
         )
 
         if not row:
@@ -98,6 +102,8 @@ class Student(BaseModel):
             field_of_study=row[1],
             student_id=row[2],
             progress=row[4],
+            internship_start_date=row[5],
+            internship_duration_weeks=row[6],
         )
 
     @staticmethod
@@ -105,7 +111,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(
             connection,
-            f"SELECT user_id, year_of_study, field_of_study, university_mentor_id, progress FROM student WHERE student_id = '{student_id}';",
+            f"SELECT user_id, year_of_study, field_of_study, university_mentor_id, progress, internship_start_date, internship_duration_weeks FROM student WHERE student_id = '{student_id}';",
         )
 
         if not row:
@@ -122,6 +128,8 @@ class Student(BaseModel):
             field_of_study=row[2],
             student_id=student_id,
             progress=row[4],
+            internship_start_date=row[5],
+            internship_duration_weeks=row[6],
         )
 
     @staticmethod
@@ -129,7 +137,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         rows = database_connector.execute_read(
             connection,
-            f"SELECT user_id, year_of_study, field_of_study, student_id, progress FROM student WHERE university_mentor_id = {mentor_id};",
+            f"SELECT user_id, year_of_study, field_of_study, student_id, progress, internship_start_date, internship_duration_weeks FROM student WHERE university_mentor_id = {mentor_id};",
         )
 
         if not rows:
@@ -147,6 +155,8 @@ class Student(BaseModel):
                     field_of_study=row[2],
                     student_id=row[3],
                     progress=row[4],
+                    internship_start_date=row[5],
+                    internship_duration_weeks=row[6],
                 )
             )
 
@@ -157,3 +167,13 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         update_student_progres = f"UPDATE student SET progress = '{progress}' WHERE student_id = '{student_id}'"
         database_connector.execute_write(connection, update_student_progres)
+
+    @staticmethod
+    def update_internship_dates(student_id: str, start_date: str, duration_weeks: int):
+        connection = database_connector.create_connection(False)
+        query = (
+            f"UPDATE student SET internship_start_date = '{start_date}', "
+            f"internship_duration_weeks = {duration_weeks} "
+            f"WHERE student_id = '{student_id}'"
+        )
+        database_connector.execute_write(connection, query)

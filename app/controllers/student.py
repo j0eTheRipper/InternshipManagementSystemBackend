@@ -1,8 +1,8 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Form, HTTPException
 
-from app.dependencies.auth import get_current_user, require_mentor
+from app.dependencies.auth import get_current_user, require_mentor, require_student
 from app.dependencies.dbExceptions import NotStudent
 from app.models.PartneredCompanies.Application import Application
 from app.models.PartneredCompanies.ExternalApplication import ExternalApplication
@@ -27,6 +27,12 @@ async def get_mentor_students(user: Annotated[User, Depends(require_mentor)]):
     return Student.get_students_by_mentor(user.user_id)
 
 
+@router.get("/student/accepted-company")
+async def get_my_accepted_company(user: Annotated[User, Depends(get_current_user)]):
+    student = Student.get_student(user)
+    return await _lookup_accepted_company(student.student_id)
+
+
 @router.get("/students/{student_id}/accepted-company")
 async def get_student_accepted_company(
     student_id: str,
@@ -37,7 +43,10 @@ async def get_student_accepted_company(
         raise HTTPException(404, "Student not found")
     if student.university_mentor.user_id != user.user_id:
         raise HTTPException(403, "You can only view your supervisees")
+    return await _lookup_accepted_company(student_id)
 
+
+async def _lookup_accepted_company(student_id: str):
     applications = Application.get_by_student(student_id)
     accepted = [a for a in applications if a.status == "accepted"]
     if not accepted:
@@ -57,3 +66,16 @@ async def get_student_accepted_company(
         return {"company": external.company_name}
 
     return {"company": None}
+
+
+@router.patch("/student/internship-details")
+async def update_internship_details(
+    user: Annotated[User, Depends(require_student)],
+    start_date: str = Form(...),
+    duration_weeks: int = Form(...),
+):
+    student = Student.get_student(user)
+    if student.progress != "accepted":
+        raise HTTPException(400, "Can only set internship details after offer letter is approved")
+    Student.update_internship_dates(student.student_id, start_date, duration_weeks)
+    return {"message": "Internship details updated"}
