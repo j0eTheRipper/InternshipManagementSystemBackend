@@ -10,6 +10,8 @@ STUDENT_DATA = {
     "student_id": "TP0112233",
     "university_mentor_id": 999,
     "progress": "none",
+    "internship_start_date": None,
+    "internship_duration_weeks": None,
 }
 
 MENTOR_DATA = {

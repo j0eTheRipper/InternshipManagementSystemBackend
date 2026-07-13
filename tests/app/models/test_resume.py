@@ -37,7 +37,7 @@ def test_upload_resume_success(mocker):
         mocker.patch(
             "app.dependencies.database_connector.execute_read",
             side_effect=[
-                [(2, "software engineer", "TP0112233", 999, "none")],
+                [(2, "software engineer", "TP0112233", 999, "none", None, None)],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
                 [(5,)],
             ],
@@ -131,7 +131,7 @@ def test_get_resume_own_student(mocker):
         mocker.patch(
             "app.dependencies.database_connector.execute_read",
             side_effect=[
-                [(2, "software engineer", "TP0112233", 999, "none")],
+                [(2, "software engineer", "TP0112233", 999, "none", None, None)],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
                 [
                     (1, "TP0112233", "/path/to/resume.pdf", False),
@@ -172,7 +172,7 @@ def test_get_resume_student_empty(mocker):
         mocker.patch(
             "app.dependencies.database_connector.execute_read",
             side_effect=[
-                [(2, "software engineer", "TP0112233", 999, "none")],
+                [(2, "software engineer", "TP0112233", 999, "none", None, None)],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
                 [],
             ],
@@ -195,7 +195,7 @@ def test_get_resume_student_cannot_lookup_other(mocker):
         mocker.patch(
             "app.dependencies.database_connector.execute_read",
             side_effect=[
-                [(2, "software engineer", "TP0112233", 999, "none")],
+                [(2, "software engineer", "TP0112233", 999, "none", None, None)],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
             ],
         )
@@ -271,7 +271,7 @@ def test_download_resume_own_student(mocker, tmp_path):
             "app.dependencies.database_connector.execute_read",
             side_effect=[
                 [(1, "TP0112233", str(pdf_path), False)],
-                [(2, "software engineer", "TP0112233", 999, "none")],
+                [(2, "software engineer", "TP0112233", 999, "none", None, None)],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
             ],
         )
@@ -297,7 +297,7 @@ def test_download_resume_other_student_forbidden(mocker):
             "app.dependencies.database_connector.execute_read",
             side_effect=[
                 [(1, "TP0999999", "/path/to/other.pdf", False)],
-                [(2, "software engineer", "TP0112233", 999, "none")],
+                [(2, "software engineer", "TP0112233", 999, "none", None, None)],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
             ],
         )

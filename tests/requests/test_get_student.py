@@ -35,7 +35,7 @@ def test_get_student_success(mocker):
         mocker.patch(
             "app.dependencies.database_connector.execute_read",
             side_effect=[
-                [(2, "software engineer", "TP0112233", 999, "none")],
+                [(2, "software engineer", "TP0112233", 999, "none", None, None)],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
             ],
         )
@@ -64,6 +64,8 @@ def test_get_student_success(mocker):
             "field_of_study": "software engineer",
             "student_id": "TP0112233",
             "progress": "none",
+            "internship_start_date": None,
+            "internship_duration_weeks": None,
         }
     finally:
         app.dependency_overrides.clear()
