@@ -20,6 +20,15 @@ async def get_today(user: Annotated[User, Depends(get_current_user)]):
     return {"checked_in": False}
 
 
+@router.get("/history")
+async def get_history(user: Annotated[User, Depends(require_student)]):
+    student = Student.get_student(user)
+    if student.progress != "accepted":
+        raise HTTPException(400, "Can only view attendance during an active internship")
+    records = Attendance.get_history(student.student_id)
+    return [r.model_dump() for r in records]
+
+
 @router.post("/check-in")
 async def check_in(user: Annotated[User, Depends(require_student)]):
     student = Student.get_student(user)

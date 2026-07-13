@@ -45,3 +45,22 @@ class Attendance(BaseModel):
             student_id=r[1],
             checked_at=str(r[2]) if r[2] else None,
         )
+
+    @staticmethod
+    def get_history(student_id: str):
+        connection = database_connector.create_connection(False)
+        query = (
+            f"SELECT attendance_id, student_id, checked_at "
+            f"FROM attendance "
+            f"WHERE student_id = '{student_id}' "
+            f"ORDER BY checked_at DESC;"
+        )
+        results = database_connector.execute_read(connection, query)
+        return [
+            Attendance(
+                attendance_id=r[0],
+                student_id=r[1],
+                checked_at=str(r[2]) if r[2] else None,
+            )
+            for r in results
+        ]
