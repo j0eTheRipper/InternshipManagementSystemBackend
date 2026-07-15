@@ -1,4 +1,5 @@
 from typing import Annotated
+from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -25,8 +26,58 @@ async def get_history(user: Annotated[User, Depends(require_student)]):
     student = Student.get_student(user)
     if student.progress != "accepted":
         raise HTTPException(400, "Can only view attendance during an active internship")
+    if not student.internship_start_date or not student.internship_duration_weeks:
+        return []
+
     records = Attendance.get_history(student.student_id)
-    return [r.model_dump() for r in records]
+    attended_map = {}
+    for r in records:
+        if r.checked_at:
+            day = r.checked_at[:10]
+            attended_map[day] = r
+
+    start = date.fromisoformat(student.internship_start_date)
+    end_of_internship = start + timedelta(weeks=student.internship_duration_weeks)
+    today = date.today()
+    range_end = min(end_of_internship, today)
+
+    if start > today:
+        return []
+
+    result = []
+    current = start
+    while current <= range_end:
+        if current.weekday() < 5:
+            d_str = current.isoformat()
+            if d_str in attended_map:
+                r = attended_map[d_str]
+                result.append({
+                    "date": d_str,
+                    "attended": True,
+                    "pending": False,
+                    "attendance_id": r.attendance_id,
+                    "checked_at": r.checked_at,
+                })
+            elif current == today:
+                result.append({
+                    "date": d_str,
+                    "attended": False,
+                    "pending": True,
+                    "attendance_id": None,
+                    "checked_at": None,
+                })
+            else:
+                result.append({
+                    "date": d_str,
+                    "attended": False,
+                    "pending": False,
+                    "attendance_id": None,
+                    "checked_at": None,
+                })
+        current += timedelta(days=1)
+
+    result.sort(key=lambda x: x["date"], reverse=True)
+    return result
 
 
 @router.post("/check-in")
