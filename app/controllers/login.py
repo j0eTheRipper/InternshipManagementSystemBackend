@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from app.dependencies.auth import create_access_token
 from app.dependencies.dbExceptions import IncorrectEmailOrPassword
 from app.models.Credentials import Credentials
+from app.models.PartneredCompanies.CompanySupervisor.CompanySupervisor import CompanySupervisor
 from app.models.PartneredCompanies.Headhunter import Headhunter
 from app.models.Role import Role
 from app.models.User import Student, User
@@ -24,6 +25,9 @@ async def login(credentials: Credentials):
         elif user.role == Role.headhunter:
             user_or_student = Headhunter.get_headhunter(user)
             role = "headhunter"
+        elif user.role == Role.companySupervisor:
+            user_or_student = CompanySupervisor.get_company_supervisor(user)
+            role = "companySupervisor"
         elif user.role == Role.admin:
             user_or_student = user
             role = "admin"

@@ -6,3 +6,4 @@ class Role(Enum):
     universityMentor = "universityMentor"
     headhunter = "headhunter"
     admin = "admin"
+    companySupervisor = "companySupervisor"

@@ -7,6 +7,9 @@ class Attendance(BaseModel):
     attendance_id: int
     student_id: str
     checked_at: str | None = None
+    verified: bool = False
+    verified_by: int | None = None
+    verified_at: str | None = None
 
     @staticmethod
     def record(student_id: str):
@@ -31,7 +34,7 @@ class Attendance(BaseModel):
     def get_today(student_id: str):
         connection = database_connector.create_connection(False)
         query = (
-            f"SELECT attendance_id, student_id, checked_at "
+            f"SELECT attendance_id, student_id, checked_at, verified, verified_by, verified_at "
             f"FROM attendance "
             f"WHERE student_id = '{student_id}' "
             f"AND checked_at::date = CURRENT_DATE;"
@@ -44,13 +47,16 @@ class Attendance(BaseModel):
             attendance_id=r[0],
             student_id=r[1],
             checked_at=str(r[2]) if r[2] else None,
+            verified=r[3] or False,
+            verified_by=r[4],
+            verified_at=str(r[5]) if r[5] else None,
         )
 
     @staticmethod
     def get_history(student_id: str):
         connection = database_connector.create_connection(False)
         query = (
-            f"SELECT attendance_id, student_id, checked_at "
+            f"SELECT attendance_id, student_id, checked_at, verified, verified_by, verified_at "
             f"FROM attendance "
             f"WHERE student_id = '{student_id}' "
             f"ORDER BY checked_at DESC;"
@@ -61,6 +67,9 @@ class Attendance(BaseModel):
                 attendance_id=r[0],
                 student_id=r[1],
                 checked_at=str(r[2]) if r[2] else None,
+                verified=r[3] or False,
+                verified_by=r[4],
+                verified_at=str(r[5]) if r[5] else None,
             )
             for r in results
         ]
@@ -83,6 +92,22 @@ class Attendance(BaseModel):
                 checked_at=str(results[0][1]) if results[0][1] else None,
             )
         return None
+
+    @staticmethod
+    def verify(attendance_id: int, verifier_id: int):
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"UPDATE attendance SET verified = TRUE, verified_by = {verifier_id}, verified_at = NOW() WHERE attendance_id = {attendance_id};",
+        )
+
+    @staticmethod
+    def unverify(attendance_id: int):
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"UPDATE attendance SET verified = FALSE, verified_by = NULL, verified_at = NULL WHERE attendance_id = {attendance_id};",
+        )
 
     @staticmethod
     def delete(attendance_id: int):

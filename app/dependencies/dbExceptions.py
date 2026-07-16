@@ -12,3 +12,7 @@ class NotHeadhunter(Exception):
 
 class NotMentor(Exception):
     pass
+
+
+class NotCompanySupervisor(Exception):
+    pass

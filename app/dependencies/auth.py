@@ -59,3 +59,9 @@ async def require_admin(user: Annotated[User, Depends(get_current_user)]) -> Use
     if user.role != Role.admin:
         raise HTTPException(403, "Only admins can access this endpoint")
     return user
+
+
+async def require_company_supervisor(user: Annotated[User, Depends(get_current_user)]) -> User:
+    if user.role != Role.companySupervisor:
+        raise HTTPException(403, "Only company supervisors can access this endpoint")
+    return user

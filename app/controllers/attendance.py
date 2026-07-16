@@ -57,6 +57,8 @@ async def get_history(user: Annotated[User, Depends(require_student)]):
                     "pending": False,
                     "attendance_id": r.attendance_id,
                     "checked_at": r.checked_at,
+                    "verified": r.verified,
+                    "verified_at": r.verified_at,
                 })
             elif current == today:
                 result.append({

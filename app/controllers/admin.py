@@ -6,7 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.dependencies.auth import require_admin
 from app.models.Attendance import Attendance
 from app.models.Mentor.Mentor import Mentor
+from app.models.PartneredCompanies.CompanySupervisor.CompanySupervisor import CompanySupervisor
 from app.models.Requests.AddAttendanceRequest import AddAttendanceRequest
+from app.models.Requests.CreateCompanySupervisorRequest import CreateCompanySupervisorRequest, \
+    AssignCompanySupervisorRequest
 from app.models.Requests.CreateMentorRequest import CreateMentorRequest
 from app.models.Requests.CreateStudentRequest import CreateStudentRequest
 from app.models.Requests.UpdateMentorRequest import UpdateMentorRequest
@@ -140,6 +143,8 @@ async def get_student_attendance(student_id: str, user: Annotated[User, Depends(
                     "pending": False,
                     "attendance_id": r.attendance_id,
                     "checked_at": r.checked_at,
+                    "verified": r.verified,
+                    "verified_at": r.verified_at,
                 })
             elif current == today:
                 result.append({
@@ -161,3 +166,42 @@ async def get_student_attendance(student_id: str, user: Annotated[User, Depends(
 
     result.sort(key=lambda x: x["date"], reverse=True)
     return result
+
+
+# ── Company Supervisors ──────────────────────────────────
+
+
+@router.post("/company-supervisors")
+async def create_company_supervisor(body: CreateCompanySupervisorRequest, user: Annotated[User, Depends(require_admin)]):
+    if User.get_by_email(body.email):
+        raise HTTPException(409, "Email already registered")
+
+    from app.models.PartneredCompanies.Company import Company
+    company = Company.get_by_id(body.company_id)
+    if not company:
+        raise HTTPException(400, "Company not found")
+
+    created_user = User.create(body.fullname, body.email, body.password, Role.companySupervisor)
+    CompanySupervisor.create(created_user.user_id, body.company_id)
+    return {"message": "Company supervisor created"}
+
+
+@router.get("/company-supervisors")
+async def list_company_supervisors(user: Annotated[User, Depends(require_admin)]):
+    supervisors = CompanySupervisor.get_all()
+    return [s.model_dump(mode="json") for s in supervisors]
+
+
+@router.delete("/company-supervisors/{supervisor_id}")
+async def delete_company_supervisor(supervisor_id: int, user: Annotated[User, Depends(require_admin)]):
+    CompanySupervisor.delete(supervisor_id)
+    return {"message": "Company supervisor deleted"}
+
+
+@router.patch("/students/{student_id}/company-supervisor")
+async def assign_company_supervisor(student_id: str, body: AssignCompanySupervisorRequest, user: Annotated[User, Depends(require_admin)]):
+    supervisor = CompanySupervisor.get_by_id(body.company_supervisor_id)
+    if not supervisor:
+        raise HTTPException(400, "Company supervisor not found")
+    Student.update_company_supervisor(student_id, body.company_supervisor_id)
+    return {"message": "Company supervisor assigned"}
