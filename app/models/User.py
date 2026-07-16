@@ -163,6 +163,55 @@ class Student(BaseModel):
         return students
 
     @staticmethod
+    def get_all_students():
+        connection = database_connector.create_connection(False)
+        rows = database_connector.execute_read(
+            connection,
+            "SELECT user_id, year_of_study, field_of_study, student_id, progress, university_mentor_id, internship_start_date, internship_duration_weeks FROM student;",
+        )
+
+        if not rows:
+            return []
+
+        students = []
+        for row in rows:
+            user = User.getUserData(row[0])
+            mentor_user = User.getUserData(row[5])
+            students.append(
+                Student(
+                    user=user,
+                    university_mentor=mentor_user,
+                    year_of_study=row[1],
+                    field_of_study=row[2],
+                    student_id=row[3],
+                    progress=row[4],
+                    internship_start_date=row[6],
+                    internship_duration_weeks=row[7],
+                )
+            )
+
+        return students
+
+    @staticmethod
+    def create(fullname: str, email: str, password: str, student_id: str,
+               year_of_study: int, field_of_study: str, mentor_id: int):
+        user = User.create(fullname, email, password, Role.student)
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"INSERT INTO student (user_id, year_of_study, field_of_study, student_id, university_mentor_id, progress) "
+            f"VALUES ({user.user_id}, {year_of_study}, '{field_of_study}', '{student_id}', {mentor_id}, 'resume');",
+        )
+
+    @staticmethod
+    def update_mentor(student_id: str, mentor_id: int):
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"UPDATE student SET university_mentor_id = {mentor_id} WHERE student_id = '{student_id}';",
+        )
+
+    @staticmethod
     def update_student_progress(student_id: str, progress: str = "application"):
         connection = database_connector.create_connection(False)
         update_student_progres = f"UPDATE student SET progress = '{progress}' WHERE student_id = '{student_id}'"

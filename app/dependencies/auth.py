@@ -53,3 +53,9 @@ async def require_headhunter(user: Annotated[User, Depends(get_current_user)]) -
     if user.role != Role.headhunter:
         raise HTTPException(403, "Only headhunters can access this endpoint")
     return user
+
+
+async def require_admin(user: Annotated[User, Depends(get_current_user)]) -> User:
+    if user.role != Role.admin:
+        raise HTTPException(403, "Only admins can access this endpoint")
+    return user

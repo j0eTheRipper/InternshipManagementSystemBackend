@@ -24,6 +24,9 @@ async def login(credentials: Credentials):
         elif user.role == Role.headhunter:
             user_or_student = Headhunter.get_headhunter(user)
             role = "headhunter"
+        elif user.role == Role.admin:
+            user_or_student = user
+            role = "admin"
         else:
             user_or_student = user
             role = "universityMentor"

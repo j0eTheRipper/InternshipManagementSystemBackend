@@ -8,3 +8,7 @@ class NotStudent(Exception):
 
 class NotHeadhunter(Exception):
     pass
+
+
+class NotMentor(Exception):
+    pass

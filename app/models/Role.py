@@ -5,3 +5,4 @@ class Role(Enum):
     student = "student"
     universityMentor = "universityMentor"
     headhunter = "headhunter"
+    admin = "admin"
