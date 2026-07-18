@@ -77,6 +77,9 @@ class Student(BaseModel):
     internship_start_date: Optional[str] = None
     internship_duration_weeks: Optional[int] = None
     company_supervisor: Optional[User] = None
+    company_supervisor_name: Optional[str] = None
+    company_supervisor_email: Optional[str] = None
+    company_supervisor_phone: Optional[str] = None
 
     @staticmethod
     def get_student(user: User):
@@ -86,7 +89,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(
             connection,
-            f"SELECT year_of_study, field_of_study, student_id, university_mentor_id, progress, internship_start_date, internship_duration_weeks, company_supervisor_id FROM student WHERE user_id = {user.user_id};",
+            f"SELECT year_of_study, field_of_study, student_id, university_mentor_id, progress, internship_start_date, internship_duration_weeks, company_supervisor_id, company_supervisor_name, company_supervisor_email, company_supervisor_phone FROM student WHERE user_id = {user.user_id};",
         )
 
         if not row:
@@ -110,6 +113,9 @@ class Student(BaseModel):
             internship_start_date=row[5],
             internship_duration_weeks=row[6],
             company_supervisor=company_supervisor_user,
+            company_supervisor_name=row[8],
+            company_supervisor_email=row[9],
+            company_supervisor_phone=row[10],
         )
 
     @staticmethod
@@ -117,7 +123,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(
             connection,
-            f"SELECT user_id, year_of_study, field_of_study, university_mentor_id, progress, internship_start_date, internship_duration_weeks, company_supervisor_id FROM student WHERE student_id = '{student_id}';",
+            f"SELECT user_id, year_of_study, field_of_study, university_mentor_id, progress, internship_start_date, internship_duration_weeks, company_supervisor_id, company_supervisor_name, company_supervisor_email, company_supervisor_phone FROM student WHERE student_id = '{student_id}';",
         )
 
         if not row:
@@ -141,6 +147,9 @@ class Student(BaseModel):
             internship_start_date=row[5],
             internship_duration_weeks=row[6],
             company_supervisor=company_supervisor_user,
+            company_supervisor_name=row[8],
+            company_supervisor_email=row[9],
+            company_supervisor_phone=row[10],
         )
 
     @staticmethod
@@ -148,7 +157,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         rows = database_connector.execute_read(
             connection,
-            f"SELECT user_id, year_of_study, field_of_study, student_id, progress, internship_start_date, internship_duration_weeks, company_supervisor_id FROM student WHERE university_mentor_id = {mentor_id};",
+            f"SELECT user_id, year_of_study, field_of_study, student_id, progress, internship_start_date, internship_duration_weeks, company_supervisor_id, company_supervisor_name, company_supervisor_email, company_supervisor_phone FROM student WHERE university_mentor_id = {mentor_id};",
         )
 
         if not rows:
@@ -174,6 +183,9 @@ class Student(BaseModel):
                     internship_start_date=row[5],
                     internship_duration_weeks=row[6],
                     company_supervisor=company_supervisor_user,
+                    company_supervisor_name=row[8],
+                    company_supervisor_email=row[9],
+                    company_supervisor_phone=row[10],
                 )
             )
 
@@ -184,7 +196,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         rows = database_connector.execute_read(
             connection,
-            "SELECT user_id, year_of_study, field_of_study, student_id, progress, university_mentor_id, internship_start_date, internship_duration_weeks, company_supervisor_id FROM student;",
+            "SELECT user_id, year_of_study, field_of_study, student_id, progress, university_mentor_id, internship_start_date, internship_duration_weeks, company_supervisor_id, company_supervisor_name, company_supervisor_email, company_supervisor_phone FROM student;",
         )
 
         if not rows:
@@ -210,6 +222,9 @@ class Student(BaseModel):
                     internship_start_date=row[6],
                     internship_duration_weeks=row[7],
                     company_supervisor=company_supervisor_user,
+                    company_supervisor_name=row[9],
+                    company_supervisor_email=row[10],
+                    company_supervisor_phone=row[11],
                 )
             )
 
@@ -220,7 +235,7 @@ class Student(BaseModel):
         connection = database_connector.create_connection(False)
         rows = database_connector.execute_read(
             connection,
-            f"SELECT user_id, year_of_study, field_of_study, student_id, progress, university_mentor_id, internship_start_date, internship_duration_weeks FROM student WHERE company_supervisor_id = {supervisor_id};",
+            f"SELECT user_id, year_of_study, field_of_study, student_id, progress, university_mentor_id, internship_start_date, internship_duration_weeks, company_supervisor_name, company_supervisor_email, company_supervisor_phone FROM student WHERE company_supervisor_id = {supervisor_id};",
         )
 
         if not rows:
@@ -240,6 +255,9 @@ class Student(BaseModel):
                     progress=row[4],
                     internship_start_date=row[6],
                     internship_duration_weeks=row[7],
+                    company_supervisor_name=row[8],
+                    company_supervisor_email=row[9],
+                    company_supervisor_phone=row[10],
                 )
             )
 
@@ -284,6 +302,17 @@ class Student(BaseModel):
         query = (
             f"UPDATE student SET internship_start_date = '{start_date}', "
             f"internship_duration_weeks = {duration_weeks} "
+            f"WHERE student_id = '{student_id}'"
+        )
+        database_connector.execute_write(connection, query)
+
+    @staticmethod
+    def update_supervisor_details(student_id: str, name: str, email: str, phone: str):
+        connection = database_connector.create_connection(False)
+        query = (
+            f"UPDATE student SET company_supervisor_name = '{name}', "
+            f"company_supervisor_email = '{email}', "
+            f"company_supervisor_phone = '{phone}' "
             f"WHERE student_id = '{student_id}'"
         )
         database_connector.execute_write(connection, query)

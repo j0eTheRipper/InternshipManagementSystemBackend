@@ -156,7 +156,7 @@ async def approve_offer_letter(
     if application:
         Application.update_status(offer_letter.application_id, "accepted")
 
-    student.update_student_progress(offer_letter.student_id, "accepted")
+    student.update_student_progress(offer_letter.student_id, "pending_documents")
 
     Notification.create_notification(
         user_id=student.user.user_id,

@@ -14,6 +14,8 @@ from app.controllers.attendance import router as attendance_router
 from app.controllers.daily_task import router as daily_task_router
 from app.controllers.admin import router as admin_router
 from app.controllers.company_supervisor import router as company_supervisor_router
+from app.controllers.indemnity_letter import router as indemnity_letter_router
+from app.controllers.placement_agreement import router as placement_agreement_router
 
 app = FastAPI()
 
@@ -33,6 +35,8 @@ app.include_router(attendance_router)
 app.include_router(daily_task_router)
 app.include_router(admin_router)
 app.include_router(company_supervisor_router)
+app.include_router(indemnity_letter_router)
+app.include_router(placement_agreement_router)
 
 app.add_middleware(
     CORSMiddleware,

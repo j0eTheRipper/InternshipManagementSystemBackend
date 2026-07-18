@@ -56,7 +56,7 @@ async def get_student(student_id: str, user: Annotated[User, Depends(require_adm
 
 @router.patch("/students/{student_id}/progress")
 async def update_progress(student_id: str, body: UpdateProgressRequest, user: Annotated[User, Depends(require_admin)]):
-    valid = {"none", "resume", "application", "offer_letter", "accepted"}
+    valid = {"none", "resume", "application", "offer_letter", "pending_documents", "accepted"}
     if body.progress not in valid:
         raise HTTPException(400, f"Progress must be one of: {', '.join(sorted(valid))}")
     Student.update_student_progress(student_id, body.progress)

@@ -75,7 +75,21 @@ async def update_internship_details(
     duration_weeks: int = Form(...),
 ):
     student = Student.get_student(user)
-    if student.progress != "accepted":
+    if student.progress not in ("accepted", "pending_documents"):
         raise HTTPException(400, "Can only set internship details after offer letter is approved")
     Student.update_internship_dates(student.student_id, start_date, duration_weeks)
     return {"message": "Internship details updated"}
+
+
+@router.patch("/student/supervisor-details")
+async def update_supervisor_details(
+    user: Annotated[User, Depends(require_student)],
+    name: str = Form(...),
+    email: str = Form(...),
+    phone: str = Form(...),
+):
+    student = Student.get_student(user)
+    if student.progress != "pending_documents":
+        raise HTTPException(400, "Can only submit supervisor details during pending documents phase")
+    Student.update_supervisor_details(student.student_id, name, email, phone)
+    return {"message": "Supervisor details updated"}
