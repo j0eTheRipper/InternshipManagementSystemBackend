@@ -119,6 +119,15 @@ class Student(BaseModel):
         )
 
     @staticmethod
+    def get_by_student_id(student_id: str):
+        connection = database_connector.create_connection(False)
+        row = database_connector.execute_read(
+            connection,
+            f"SELECT 1 FROM student WHERE student_id = '{student_id}';",
+        )
+        return bool(row)
+
+    @staticmethod
     def get_student_by_id(student_id: str):
         connection = database_connector.create_connection(False)
         row = database_connector.execute_read(

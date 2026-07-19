@@ -28,6 +28,9 @@ async def create_student(body: CreateStudentRequest, user: Annotated[User, Depen
     if User.get_by_email(body.email):
         raise HTTPException(409, "Email already registered")
 
+    if Student.get_by_student_id(body.student_id):
+        raise HTTPException(409, "Student ID already exists")
+
     mentor = User.getUserData(body.mentor_id)
     if mentor.role != Role.universityMentor:
         raise HTTPException(400, "Assigned mentor must be a university mentor")
