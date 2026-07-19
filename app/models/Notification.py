@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 
 from app.dependencies import database_connector
+from app.models.FcmToken import FcmToken
+from app.services.firebase_service import send_push
 
 
 class Notification(BaseModel):
@@ -20,6 +22,10 @@ class Notification(BaseModel):
         related = str(related_id) if related_id is not None else "NULL"
         query = f"INSERT INTO notification (user_id, message, type, related_id) VALUES ({user_id}, '{message}', '{type}', {related});"
         database_connector.execute_write(connection, query)
+
+        tokens = FcmToken.get_tokens(user_id)
+        for token in tokens:
+            send_push(token, "Internship Manager", message)
 
     @staticmethod
     def get_notifications(user_id: int):

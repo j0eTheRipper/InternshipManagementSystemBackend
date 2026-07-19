@@ -18,6 +18,9 @@ from app.controllers.admin import router as admin_router
 from app.controllers.company_supervisor import router as company_supervisor_router
 from app.controllers.indemnity_letter import router as indemnity_letter_router
 from app.controllers.placement_agreement import router as placement_agreement_router
+from app.controllers.fcm_token import router as fcm_token_router
+from app.services.firebase_service import init_firebase
+from app.services.scheduler import start_scheduler
 
 load_dotenv()
 
@@ -43,6 +46,10 @@ app.include_router(admin_router)
 app.include_router(company_supervisor_router)
 app.include_router(indemnity_letter_router)
 app.include_router(placement_agreement_router)
+app.include_router(fcm_token_router)
+
+init_firebase()
+start_scheduler()
 
 app.add_middleware(
     CORSMiddleware,

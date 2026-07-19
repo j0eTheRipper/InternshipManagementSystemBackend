@@ -208,5 +208,5 @@ __marimo__/
 
 .idea/
 
-firebase_priv_key.json
+serviceAccountKey.json
 uploads/
