@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
 
 from app.controllers.login import router as login_router
 from app.controllers.student import router as student_router
@@ -17,10 +19,14 @@ from app.controllers.company_supervisor import router as company_supervisor_rout
 from app.controllers.indemnity_letter import router as indemnity_letter_router
 from app.controllers.placement_agreement import router as placement_agreement_router
 
+load_dotenv()
+
 app = FastAPI()
 
 origins = [
-    "http://localhost:8080",
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:8080").split(",")
+    if origin.strip()
 ]
 
 app.include_router(login_router)
