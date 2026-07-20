@@ -14,6 +14,7 @@ from app.models.Requests.CreateMentorRequest import CreateMentorRequest
 from app.models.Requests.CreateStudentRequest import CreateStudentRequest
 from app.models.Requests.UpdateMentorRequest import UpdateMentorRequest
 from app.models.Requests.UpdateProgressRequest import UpdateProgressRequest
+from app.dependencies import database_connector
 from app.models.Role import Role
 from app.models.User import Student, User
 
@@ -186,6 +187,9 @@ async def create_company_supervisor(body: CreateCompanySupervisorRequest, user: 
 
     created_user = User.create(body.fullname, body.email, body.password, Role.companySupervisor)
     CompanySupervisor.create(created_user.user_id, body.company_id)
+
+    Student.assign_company_supervisor_by_email(body.email, created_user.user_id)
+
     return {"message": "Company supervisor created"}
 
 
@@ -199,6 +203,29 @@ async def list_company_supervisors(user: Annotated[User, Depends(require_admin)]
 async def delete_company_supervisor(supervisor_id: int, user: Annotated[User, Depends(require_admin)]):
     CompanySupervisor.delete(supervisor_id)
     return {"message": "Company supervisor deleted"}
+
+
+@router.get("/pending-supervisors")
+async def get_pending_supervisors(user: Annotated[User, Depends(require_admin)]):
+    connection = database_connector.create_connection(False)
+    rows = database_connector.execute_read(
+        connection,
+        """
+        SELECT DISTINCT s.company_supervisor_name, s.company_supervisor_email, s.company_supervisor_phone
+        FROM student s
+        WHERE s.company_supervisor_email IS NOT NULL
+          AND s.company_supervisor_email != ''
+          AND NOT EXISTS (
+            SELECT 1 FROM users u WHERE u.email = s.company_supervisor_email
+          );
+        """,
+    )
+    if not rows:
+        return []
+    return [
+        {"name": r[0], "email": r[1], "phone": r[2]}
+        for r in rows
+    ]
 
 
 @router.patch("/students/{student_id}/company-supervisor")

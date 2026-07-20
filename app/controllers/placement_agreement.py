@@ -30,8 +30,18 @@ def _validate_file(file: UploadFile, content: bytes):
 def _check_and_transition(student_id: str):
     indemnity = IndemnityLetter.get_by_student(student_id)
     placement = PlacementAgreement.get_by_student(student_id)
-    if indemnity and indemnity[0].verified and placement and placement[0].verified:
-        Student.update_student_progress(student_id, "accepted")
+    if not (indemnity and indemnity[0].verified and placement and placement[0].verified):
+        return
+
+    student = Student.get_student_by_id(student_id)
+    if not student.company_supervisor_email:
+        return
+
+    supervisor_user = User.get_by_email(student.company_supervisor_email)
+    if not supervisor_user:
+        return
+
+    Student.update_student_progress(student_id, "accepted")
 
 
 @router.post("/upload")

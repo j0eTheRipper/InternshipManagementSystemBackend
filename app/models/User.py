@@ -300,6 +300,14 @@ class Student(BaseModel):
         )
 
     @staticmethod
+    def assign_company_supervisor_by_email(email: str, company_supervisor_id: int):
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"UPDATE student SET company_supervisor_id = {company_supervisor_id} WHERE company_supervisor_email = '{email}' AND company_supervisor_id IS NULL;",
+        )
+
+    @staticmethod
     def update_student_progress(student_id: str, progress: str = "application"):
         connection = database_connector.create_connection(False)
         update_student_progres = f"UPDATE student SET progress = '{progress}' WHERE student_id = '{student_id}'"

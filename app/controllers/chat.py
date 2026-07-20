@@ -191,6 +191,8 @@ async def mark_conversation_read(
 
     Message.mark_as_read(conversation_id, user.user_id)
 
+    Notification.mark_read_by_type(user.user_id, "new_message", conversation_id)
+
     other_id = Conversation.get_other_participant(conversation_id, user.user_id)
     if other_id and manager.is_online(other_id):
         await manager.send_to_user(other_id, {

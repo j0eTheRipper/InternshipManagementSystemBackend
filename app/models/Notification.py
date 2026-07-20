@@ -60,3 +60,9 @@ class Notification(BaseModel):
         connection = database_connector.create_connection(False)
         query = f"UPDATE notification SET is_read = true WHERE notification_id = {notification_id};"
         database_connector.execute_write(connection, query)
+
+    @staticmethod
+    def mark_read_by_type(user_id: int, type: str, related_id: int):
+        connection = database_connector.create_connection(False)
+        query = f"UPDATE notification SET is_read = true WHERE user_id = {user_id} AND type = '{type}' AND related_id = {related_id} AND is_read = false;"
+        database_connector.execute_write(connection, query)
