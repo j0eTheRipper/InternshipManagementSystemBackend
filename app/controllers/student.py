@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Form, HTTPException
 
 from app.dependencies.auth import get_current_user, require_mentor, require_student
 from app.dependencies.dbExceptions import NotStudent
+from app.dependencies import database_connector
 from app.models.PartneredCompanies.Application import Application
 from app.models.PartneredCompanies.ExternalApplication import ExternalApplication
 from app.models.PartneredCompanies.Headhunter.Headhunter import Headhunter
@@ -44,6 +45,46 @@ async def get_student_accepted_company(
     if student.university_mentor.user_id != user.user_id:
         raise HTTPException(403, "You can only view your supervisees")
     return await _lookup_accepted_company(student_id)
+
+
+@router.get("/students/{student_id}/applications")
+async def get_student_applications(
+    student_id: str,
+    user: Annotated[User, Depends(require_mentor)],
+):
+    student = Student.get_student_by_id(student_id)
+    if not student:
+        raise HTTPException(404, "Student not found")
+    if student.university_mentor.user_id != user.user_id:
+        raise HTTPException(403, "You can only view your supervisees")
+
+    connection = database_connector.create_connection(False)
+    rows = database_connector.execute_read(
+        connection,
+        f"SELECT a.application_id, a.student_id, a.opportunity_id, a.resume_id, a.status, "
+        f"ea.application_id IS NOT NULL AS is_external, "
+        f"ea.company_name, ea.job_title, ea.job_mode, ea.company_location, ea.application_screenshot "
+        f"FROM application a "
+        f"LEFT JOIN external_application ea ON a.application_id = ea.application_id "
+        f"WHERE a.student_id = '{student_id}' "
+        f"ORDER BY a.application_id DESC;",
+    )
+    return [
+        {
+            "application_id": r[0],
+            "student_id": r[1],
+            "opportunity_id": r[2],
+            "resume_id": r[3],
+            "status": r[4],
+            "is_external": r[5],
+            "company_name": r[6],
+            "job_title": r[7],
+            "job_mode": r[8],
+            "company_location": r[9],
+            "application_screenshot": r[10],
+        }
+        for r in rows
+    ]
 
 
 async def _lookup_accepted_company(student_id: str):

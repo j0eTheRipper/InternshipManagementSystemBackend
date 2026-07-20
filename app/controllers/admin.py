@@ -4,6 +4,7 @@ from datetime import date, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.dependencies.auth import require_admin
+from app.dependencies import database_connector
 from app.models.Attendance import Attendance
 from app.models.Mentor.Mentor import Mentor
 from app.models.PartneredCompanies.CompanySupervisor.CompanySupervisor import CompanySupervisor
@@ -14,7 +15,6 @@ from app.models.Requests.CreateMentorRequest import CreateMentorRequest
 from app.models.Requests.CreateStudentRequest import CreateStudentRequest
 from app.models.Requests.UpdateMentorRequest import UpdateMentorRequest
 from app.models.Requests.UpdateProgressRequest import UpdateProgressRequest
-from app.dependencies import database_connector
 from app.models.Role import Role
 from app.models.User import Student, User
 
@@ -189,6 +189,18 @@ async def create_company_supervisor(body: CreateCompanySupervisorRequest, user: 
     CompanySupervisor.create(created_user.user_id, body.company_id)
 
     Student.assign_company_supervisor_by_email(body.email, created_user.user_id)
+
+    connection = database_connector.create_connection(False)
+    rows = database_connector.execute_read(
+        connection,
+        f"SELECT s.student_id FROM student s "
+        f"WHERE s.company_supervisor_email = '{body.email}' "
+        f"AND s.progress = 'pending_documents' "
+        f"AND EXISTS (SELECT 1 FROM indemnity_letter il WHERE il.student_id = s.student_id AND il.verified = TRUE) "
+        f"AND EXISTS (SELECT 1 FROM placement_agreement pa WHERE pa.student_id = s.student_id AND pa.verified = TRUE);",
+    )
+    for (student_id,) in rows:
+        Student.update_student_progress(student_id, "accepted")
 
     return {"message": "Company supervisor created"}
 
