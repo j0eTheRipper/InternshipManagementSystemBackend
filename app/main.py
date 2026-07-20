@@ -19,6 +19,8 @@ from app.controllers.company_supervisor import router as company_supervisor_rout
 from app.controllers.indemnity_letter import router as indemnity_letter_router
 from app.controllers.placement_agreement import router as placement_agreement_router
 from app.controllers.fcm_token import router as fcm_token_router
+from app.controllers.chat import router as chat_router
+from app.controllers.chat import chat_websocket
 from app.services.firebase_service import init_firebase
 from app.services.scheduler import start_scheduler
 
@@ -47,6 +49,9 @@ app.include_router(company_supervisor_router)
 app.include_router(indemnity_letter_router)
 app.include_router(placement_agreement_router)
 app.include_router(fcm_token_router)
+app.include_router(chat_router)
+
+app.websocket("/ws/chat/{conversation_id}")(chat_websocket)
 
 init_firebase()
 start_scheduler()
