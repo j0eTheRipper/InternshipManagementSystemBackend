@@ -1,5 +1,5 @@
 from typing import Annotated
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -123,7 +123,8 @@ async def get_student_attendance(student_id: str, user: Annotated[User, Depends(
     attended_map = {}
     for r in records:
         if r.checked_at:
-            day = r.checked_at[:10]
+            dt_utc = datetime.fromisoformat(r.checked_at[:19].replace(' ', 'T')).replace(tzinfo=timezone.utc)
+            day = dt_utc.astimezone().strftime('%Y-%m-%d')
             attended_map[day] = r
 
     start = date.fromisoformat(student.internship_start_date)
