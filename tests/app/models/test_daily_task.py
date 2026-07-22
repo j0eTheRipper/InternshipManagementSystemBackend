@@ -5,7 +5,7 @@ def test_submit_creates_new_daily_task(mocker):
     mocker.patch("app.dependencies.database_connector.execute_write")
     mocker.patch(
         "app.dependencies.database_connector.execute_read",
-        return_value=[(1, "2025-07-10", "2025-07-07", "2025-07-13", "2025-07-10 10:00:00")],
+        return_value=[(1, "2025-07-10", "2025-07-07", "2025-07-13", "2025-07-10 10:00:00", False, None, None)],
     )
 
     result = DailyTask.submit("TP0112233", "Built auth flow", "2025-07-10", "2025-07-07", "2025-07-13")
@@ -24,7 +24,7 @@ def test_submit_updates_existing_daily_task(mocker):
     mocker.patch("app.dependencies.database_connector.execute_write")
     mocker.patch(
         "app.dependencies.database_connector.execute_read",
-        return_value=[(1, "2025-07-11", "2025-07-07", "2025-07-13", "2025-07-11 09:00:00")],
+        return_value=[(1, "2025-07-11", "2025-07-07", "2025-07-13", "2025-07-11 09:00:00", False, None, None)],
     )
 
     result = DailyTask.submit("TP0112233", "Updated tasks", "2025-07-11", "2025-07-07", "2025-07-13")
@@ -36,7 +36,7 @@ def test_submit_updates_existing_daily_task(mocker):
 def test_get_by_date_returns_task(mocker):
     mocker.patch(
         "app.dependencies.database_connector.execute_read",
-        return_value=[(1, "TP0112233", "Built auth", "2025-07-10", "2025-07-07", "2025-07-13", "2025-07-10 10:00:00")],
+        return_value=[(1, "TP0112233", "Built auth", "2025-07-10", "2025-07-07", "2025-07-13", "2025-07-10 10:00:00", False, None, None)],
     )
 
     result = DailyTask.get_by_date("TP0112233", "2025-07-10")
@@ -61,8 +61,8 @@ def test_get_history_returns_records_ordered_by_date_desc(mocker):
     mocker.patch(
         "app.dependencies.database_connector.execute_read",
         return_value=[
-            (2, "TP0112233", "Day 2 tasks", "2025-07-11", "2025-07-07", "2025-07-13", "2025-07-11 10:00:00"),
-            (1, "TP0112233", "Day 1 tasks", "2025-07-10", "2025-07-07", "2025-07-13", "2025-07-10 10:00:00"),
+            (2, "TP0112233", "Day 2 tasks", "2025-07-11", "2025-07-07", "2025-07-13", "2025-07-11 10:00:00", False, None, None),
+            (1, "TP0112233", "Day 1 tasks", "2025-07-10", "2025-07-07", "2025-07-13", "2025-07-10 10:00:00", False, None, None),
         ],
     )
 

@@ -44,7 +44,7 @@ def test_list_students_success(mocker):
             "app.dependencies.database_connector.execute_read",
             side_effect=[
                 # get_all_students query
-                [(300, 2, "CS", "TP0112233", "none", 200, None, None)],
+                [(300, 2, "CS", "TP0112233", "none", 200, None, None, None, None, None, None)],
                 # getUserData for student user
                 [("Student User", "student@example.com", "student", 300)],
                 # getUserData for mentor
@@ -109,6 +109,10 @@ def test_create_student_success(mocker):
             side_effect=[
                 # get_by_email (no existing)
                 [],
+                # get_by_student_id (no existing)
+                [],
+                # User.getUserData for mentor
+                [("Mentor User", "mentor@example.com", "universityMentor", 200)],
                 # User.create -> get_by_email
                 [("New Student", "new@example.com", "student", 400)],
             ],
@@ -120,10 +124,6 @@ def test_create_student_success(mocker):
         mocker.patch(
             "app.dependencies.database_connector.execute_write",
             return_value=None,
-        )
-        mocker.patch(
-            "app.models.User.User.getUserData",
-            return_value=mock_mentor,
         )
 
         response = client.post(
@@ -181,7 +181,12 @@ def test_create_student_invalid_mentor(mocker):
     try:
         mocker.patch(
             "app.dependencies.database_connector.execute_read",
-            side_effect=[[]],
+            side_effect=[
+                # get_by_email (no existing)
+                [],
+                # get_by_student_id (no existing)
+                [],
+            ],
         )
         mocker.patch(
             "app.dependencies.database_connector.create_connection",
@@ -398,7 +403,7 @@ def test_get_student_detail_success(mocker):
             "app.dependencies.database_connector.execute_read",
             side_effect=[
                 # get_student_by_id query
-                [(300, 2, "CS", 200, "none", None, None)],
+                [(300, 2, "CS", 200, "none", None, None, None, None, None, None)],
                 # getUserData for student user
                 [("Student User", "student@example.com", "student", 300)],
                 # getUserData for mentor
@@ -427,7 +432,7 @@ def test_add_attendance_success(mocker):
             "app.dependencies.database_connector.execute_read",
             side_effect=[
                 # get_student_by_id
-                [(300, 2, "CS", 200, "accepted", None, None)],
+                [(300, 2, "CS", 200, "accepted", None, None, None, None, None, None)],
                 # getUserData for student user
                 [("Student User", "student@example.com", "student", 300)],
                 # getUserData for mentor
@@ -481,15 +486,15 @@ def test_get_student_attendance_success(mocker):
             "app.dependencies.database_connector.execute_read",
             side_effect=[
                 # get_student_by_id: student record
-                [(300, 2, "CS", 200, "accepted", "2024-07-01", 12)],
+                [(300, 2, "CS", 200, "accepted", "2024-07-01", 12, None, None, None, None)],
                 # getUserData for student user
                 [("Student User", "student@example.com", "student", 300)],
                 # getUserData for mentor
                 [("Mentor User", "mentor@example.com", "universityMentor", 200)],
                 # Attendance.get_history
                 [
-                    (1, "TP0112233", "2024-07-15 09:00:00"),
-                    (2, "TP0112233", "2024-07-12 08:30:00"),
+                    (1, "TP0112233", "2024-07-15 09:00:00", False, None, None),
+                    (2, "TP0112233", "2024-07-12 08:30:00", False, None, None),
                 ],
             ],
         )

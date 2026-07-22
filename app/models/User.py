@@ -66,6 +66,33 @@ class User(BaseModel):
         )
         return User.get_by_email(email)
 
+    @staticmethod
+    def verify_password(user_id: int, password: str) -> bool:
+        connection = database_connector.create_connection(False)
+        row = database_connector.execute_read(
+            connection,
+            f"SELECT password FROM users WHERE id = {user_id};",
+        )
+        if not row:
+            return False
+        return row[0][0] == password
+
+    @staticmethod
+    def update_email(user_id: int, new_email: str):
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"UPDATE users SET email = '{new_email}' WHERE id = {user_id};",
+        )
+
+    @staticmethod
+    def update_password(user_id: int, new_password: str):
+        connection = database_connector.create_connection(False)
+        database_connector.execute_write(
+            connection,
+            f"UPDATE users SET password = '{new_password}' WHERE id = {user_id};",
+        )
+
 
 class Student(BaseModel):
     user: User

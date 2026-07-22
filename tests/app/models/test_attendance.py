@@ -3,9 +3,9 @@ from app.models.Attendance import Attendance
 
 def test_get_history_returns_records_ordered_desc(mocker):
     mock_rows = [
-        (3, "TP0112233", "2025-07-10 09:00:00"),
-        (2, "TP0112233", "2025-07-09 09:15:00"),
-        (1, "TP0112233", "2025-07-08 08:45:00"),
+        (3, "TP0112233", "2025-07-10 09:00:00", False, None, None),
+        (2, "TP0112233", "2025-07-09 09:15:00", False, None, None),
+        (1, "TP0112233", "2025-07-08 08:45:00", False, None, None),
     ]
     mocker.patch(
         "app.dependencies.database_connector.execute_read",
@@ -35,7 +35,7 @@ def test_get_history_returns_empty_list_when_no_records(mocker):
 
 def test_get_history_handles_none_checked_at(mocker):
     mock_rows = [
-        (1, "TP0112233", None),
+        (1, "TP0112233", None, False, None, None),
     ]
     mocker.patch(
         "app.dependencies.database_connector.execute_read",
@@ -69,7 +69,7 @@ def test_record_returns_attendance_object(mocker):
 
 
 def test_get_today_returns_record_when_checked_in(mocker):
-    mock_rows = [(1, "TP0112233", "2025-07-10 09:00:00")]
+    mock_rows = [(1, "TP0112233", "2025-07-10 09:00:00", False, None, None)]
     mocker.patch(
         "app.dependencies.database_connector.execute_read",
         return_value=mock_rows,

@@ -4,6 +4,8 @@ from app.models.Notification import Notification
 def test_create_notification(mocker):
     mock_write = mocker.patch("app.dependencies.database_connector.execute_write")
     mocker.patch("app.dependencies.database_connector.create_connection", return_value=None)
+    mocker.patch("app.models.FcmToken.FcmToken.get_tokens", return_value=[])
+    mocker.patch("app.models.Notification.send_push")
 
     Notification.create_notification(
         user_id=1,
@@ -24,6 +26,8 @@ def test_create_notification(mocker):
 def test_create_notification_without_related_id(mocker):
     mock_write = mocker.patch("app.dependencies.database_connector.execute_write")
     mocker.patch("app.dependencies.database_connector.create_connection", return_value=None)
+    mocker.patch("app.models.FcmToken.FcmToken.get_tokens", return_value=[])
+    mocker.patch("app.models.Notification.send_push")
 
     Notification.create_notification(
         user_id=2,

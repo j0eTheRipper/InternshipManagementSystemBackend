@@ -12,6 +12,10 @@ STUDENT_DATA = {
     "progress": "none",
     "internship_start_date": None,
     "internship_duration_weeks": None,
+    "company_supervisor_id": None,
+    "company_supervisor_name": None,
+    "company_supervisor_email": None,
+    "company_supervisor_phone": None,
 }
 
 MENTOR_DATA = {

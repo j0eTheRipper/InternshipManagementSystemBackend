@@ -35,9 +35,9 @@ def test_get_student_success(mocker):
         mocker.patch(
             "app.dependencies.database_connector.execute_read",
             side_effect=[
-                [(2, "software engineer", "TP0112233", 999, "none", None, None)],
-                [("Mentor One", "mentor@example.com", "universityMentor", 999)],
-            ],
+                    [(2, "software engineer", "TP0112233", 999, "none", None, None, None, None, None, None)],
+                    [("Mentor One", "mentor@example.com", "universityMentor", 999)],
+                ],
         )
         mocker.patch(
             "app.dependencies.database_connector.create_connection",
