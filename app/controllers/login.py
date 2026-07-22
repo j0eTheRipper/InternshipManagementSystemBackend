@@ -4,7 +4,7 @@ from app.dependencies.auth import create_access_token
 from app.dependencies.dbExceptions import IncorrectEmailOrPassword
 from app.models.Credentials import Credentials
 from app.models.PartneredCompanies.CompanySupervisor.CompanySupervisor import CompanySupervisor
-from app.models.PartneredCompanies.Headhunter import Headhunter
+from app.models.PartneredCompanies.Headhunter.Headhunter import Headhunter
 from app.models.Role import Role
 from app.models.User import Student, User
 

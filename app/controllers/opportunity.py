@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.dependencies.auth import get_current_user, require_headhunter
 from app.models.PartneredCompanies.Headhunter.Headhunter import Headhunter
@@ -21,22 +21,38 @@ async def create_opportunity(
     description = body.get("description")
     location = body.get("location")
     status = body.get("status", "remote")
+    field_of_study = body.get("field_of_study")
 
     if not all([title, job_role, description, location]):
         raise HTTPException(400, "title, job_role, description, and location are required")
+
+    if not field_of_study:
+        raise HTTPException(400, "field_of_study is required")
 
     valid_statuses = ["remote", "hybrid", "on-site"]
     if status not in valid_statuses:
         raise HTTPException(400, f"status must be one of: {', '.join(valid_statuses)}")
 
-    opportunity = JobOpportunity.create(title, job_role, description, location, status, user.user_id)
+    opportunity = JobOpportunity.create(title, job_role, description, location, status, field_of_study, user.user_id)
     headhunter = Headhunter.get_headhunter(user)
     return opportunity.model_dump_with_company(headhunter.company.name)
 
 
 @router.get("")
-async def list_opportunities(user: Annotated[User, Depends(get_current_user)]):
-    opportunities = JobOpportunity.get_all()
+async def list_opportunities(
+    user: Annotated[User, Depends(get_current_user)],
+    field_of_study: str | None = Query(None),
+    limit: int = Query(10, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    other_fields: bool = Query(False),
+):
+    if field_of_study and other_fields:
+        opportunities = JobOpportunity.get_paginated_others(field_of_study, limit, offset)
+    elif field_of_study:
+        opportunities = JobOpportunity.get_paginated(field_of_study, limit, offset)
+    else:
+        opportunities = JobOpportunity.get_all()
+
     result = []
     for opp in opportunities:
         headhunter = Headhunter.get_headhunter(User.getUserData(opp.headhunter_id))
