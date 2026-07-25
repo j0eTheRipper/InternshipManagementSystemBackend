@@ -40,6 +40,7 @@ def test_upload_resume_success(mocker):
                 [(2, "software engineer", "TP0112233", 999, "none", None, None, None, None, None, None)],
                 [("Mentor One", "mentor@example.com", "universityMentor", 999)],
                 [(5,)],
+                [],
             ],
         )
         mocker.patch("app.dependencies.database_connector.execute_write")

@@ -66,6 +66,10 @@ def test_get_student_success(mocker):
             "progress": "none",
             "internship_start_date": None,
             "internship_duration_weeks": None,
+            "company_supervisor": None,
+            "company_supervisor_name": None,
+            "company_supervisor_email": None,
+            "company_supervisor_phone": None,
         }
     finally:
         app.dependency_overrides.clear()
